@@ -1,0 +1,21 @@
+﻿###################################
+# Syntax Coloring Map for library #
+###################################
+
+################################
+# Classes/Datatypes (KEYWORD1) #
+################################
+DS3231M			KEYWORD1
+DateTime		KEYWORD1
+TimeSpan		KEYWORD1
+
+####################################
+# Methods and Functions (KEYWORD2) #
+####################################
+begin			KEYWORD2
+
+
+########################
+# Constants (LITERAL1) #
+########################
+
