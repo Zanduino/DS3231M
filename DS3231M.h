@@ -1,6 +1,7 @@
 /*******************************************************************************************************************
-** Class definition header for the DS3231M from Maxim integrated. The DS3231M's data sheet is located at          **
-** https://datasheets.maximintegrated.com/en/ds/DS3231M.pdf.                                                      **
+** Class definition header for the DS3231M real-time-clock from Maxim integrated, described at                    **
+** https://www.maximintegrated.com/en/products/digital/real-time-clocks/DS3231M.html. The DS3231M's data sheet is **
+** located at https://datasheets.maximintegrated.com/en/ds/DS3231M.pdf.                                            **
 **                                                                                                                **
 ** Use is made of portions of Adafruit's RTClib Version 1.2.0 at https://github.com/adafruit/RTClib which is a    **
 ** a fork of the original RTClib from Jeelabs. The code encompasses simple classes for time and date.             **
@@ -33,7 +34,8 @@
   /*****************************************************************************************************************
   ** Declare constants used in the class                                                                          **
   *****************************************************************************************************************/
-  const uint8_t  DS3231M_ADDRESS           =      0x6F;                       // Device address, fixed value      //
+  const uint32_t SECONDS_PER_DAY           =     86400;                       // 60 secs * 60 mins * 24 hours     //
+  const uint32_t SECONDS_FROM_1970_TO_2000 = 946684800;                       //                                  //
   const uint8_t  DS3231M_RTCSEC            =      0x00;                       // Register definitions             //
   const uint8_t  DS3231M_RTCMIN            =      0x01;                       //                                  //
   const uint8_t  DS3231M_RTCHOUR           =      0x02;                       //                                  //
@@ -41,28 +43,17 @@
   const uint8_t  DS3231M_RTCDATE           =      0x04;                       //                                  //
   const uint8_t  DS3231M_RTCMTH            =      0x05;                       //                                  //
   const uint8_t  DS3231M_RTCYEAR           =      0x06;                       //                                  //
-  const uint8_t  DS3231M_CONTROL           =      0x07;                       //                                  //
-  const uint8_t  DS3231M_OSCTRIM           =      0x08;                       //                                  //
-  const uint8_t  DS3231M_ALM0SEC           =      0x0A;                       //                                  //
-  const uint8_t  DS3231M_ALM0MIN           =      0x0B;                       //                                  //
-  const uint8_t  DS3231M_ALM0HOUR          =      0x0C;                       //                                  //
-  const uint8_t  DS3231M_ALM0WKDAY         =      0x0D;                       //                                  //
-  const uint8_t  DS3231M_ALM0DATE          =      0x0E;                       //                                  //
-  const uint8_t  DS3231M_ALM0MTH           =      0x0F;                       //                                  //
-  const uint8_t  DS3231M_ALM1SEC           =      0x11;                       //                                  //
-  const uint8_t  DS3231M_ALM1MIN           =      0x12;                       //                                  //
-  const uint8_t  DS3231M_ALM1HOUR          =      0x13;                       //                                  //
-  const uint8_t  DS3231M_ALM1WKDAY         =      0x14;                       //                                  //
-  const uint8_t  DS3231M_ALM1DATE          =      0x15;                       //                                  //
-  const uint8_t  DS3231M_ALM1MTH           =      0x16;                       //                                  //
-  const uint8_t  DS3231M_PWR_DOWN          =      0x18;                       //                                  //
-  const uint8_t  DS3231M_PWR_UP            =      0x1C;                       //                                  //
-  const uint8_t  DS3231M_RAM_ADDRESS       =      0x20;                       // Start address for SRAM           //
-  const uint32_t SECONDS_PER_DAY           =     86400;                       // 60 secs * 60 mins * 24 hours     //
-  const uint32_t SECONDS_FROM_1970_TO_2000 = 946684800;                       //                                  //
-  const uint8_t  DS3231M_CONTROL_OUT       =         7;                       // Bit 7 is "OUT" in control reg    //
-  const uint8_t  DS3231M_RTCSEC_SC         =         7;                       // Bit 7 is "ST" in seconds register//
-  const uint8_t  DS3231M_RTCWKDAY_OSCRUN   =         5;                       //                                  //
+  const uint8_t  DS3231M_ALM1SEC           =      0x07;                       //                                  //
+  const uint8_t  DS3231M_ALM1MIN           =      0x08;                       //                                  //
+  const uint8_t  DS3231M_ALM1HOUR          =      0x09;                       //                                  //
+  const uint8_t  DS3231M_ALM1DATE          =      0x0A;                       //                                  //
+  const uint8_t  DS3231M_ALM2MIN           =      0x0B;                       //                                  //
+  const uint8_t  DS3231M_ALM2HOUR          =      0x0C;                       //                                  //
+  const uint8_t  DS3231M_ALM2DATE          =      0x0D;                       //                                  //
+  const uint8_t  DS3231M_CONTROL           =      0x0E;                       //                                  //
+  const uint8_t  DS3231M_STATUS            =      0x0F;                       //                                  //
+  const uint8_t  DS3231M_AGING             =      0x10;                       //                                  //
+  const uint8_t  DS3231M_TEMPERATURE       =      0x11;                       //                                  //
   /*****************************************************************************************************************
   ** Simple general-purpose date/time class (no TZ / DST / leap second handling). Copied from RTClib. For further **
   ** information on this implementation see https://github.com/SV-Zanshin/DS3231M/wiki/DateTimeClass              **
@@ -118,6 +109,7 @@
       DS3231M_Class();                                                        // Class constructor                //
       ~DS3231M_Class();                                                       // Class destructor                 //
       bool     begin();                                                       // Start I2C Comms with device      //
+/*
       bool     deviceStatus();                                                // return true when DS3231M is on   //
       bool     deviceStart();                                                 // Start the DS3231M clock          //
       bool     deviceStop();                                                  // Stop the DS3231M clock           //
@@ -149,35 +141,7 @@
       bool     clearPowerFail();                                              // Clear the power fail flag        //
       DateTime getPowerDown();                                                // Return date when power failed    //
       DateTime getPowerUp();                                                  // Return date when power restored  //
-      /*************************************************************************************************************
-      ** Declare the readRAM() and writeRAM() methods as template functions to use for all I2C device I/O. The    **
-      ** code has to be in the main library definition rather than the actual DS3231M.cpp library file.           **
-      ** The template functions allow any type of data to be read and written, be it a byte or a character array  **
-      ** or a structure.                                                                                          **
-      *************************************************************************************************************/
-      template< typename T >                                                  // method to read a structure       //
-        uint8_t&  DS3231M_Class::readRAM(const uint8_t addr,T &value) {       //                                  //
-        uint8_t* bytePtr    = (uint8_t*)&value;                               // Pointer to structure beginning   //
-        uint8_t  structSize = sizeof(T);                                      // Number of bytes in structure     //
-        uint8_t  i          = 0;                                              // loop counter                     //
-        Wire.beginTransmission(DS3231M_ADDRESS);                              // Address the I2C device           //
-        Wire.write((addr%64)+DS3231M_RAM_ADDRESS);                            // Send register address to write   //
-        _TransmissionStatus = Wire.endTransmission();                         // Close transmission               //
-        Wire.requestFrom(DS3231M_ADDRESS, structSize);                        // Request the data                 //
-        if(Wire.available()==structSize) {                                    // If number of bytes match         //
-          for (i=0;i<structSize;i++) *bytePtr++ = Wire.read();                // loop for each byte to be read    //
-        } // of if-then bytes received match requested                        //                                  //
-        return (i);                                                           // return bytes read                //
-      } // of method readRAM()                                                //----------------------------------//
-      template<typename T>                                                    // method to write any data type to //
-      bool DS3231M_Class::writeRAM(const uint8_t addr, const T &value) {      // the DS3231M SRAM                 //
-        const uint8_t* bytePtr = (const uint8_t*)&value;                      // Pointer to structure beginning   //
-        Wire.beginTransmission(DS3231M_ADDRESS);                              // Address the I2C device           //
-        Wire.write((addr%64)+DS3231M_RAM_ADDRESS);                            // Send register address to write   //
-        for (uint8_t i=0;i<sizeof(T);i++) Wire.write(*bytePtr++);             // loop for each byte to be written //
-        _TransmissionStatus = Wire.endTransmission();                         // Close transmission               //
-        return (!_TransmissionStatus);                                        // return error status              //
-      } // of method writeRAM()                                               //----------------------------------//
+*/
     private:                                                                  // Private methods                  //
       uint8_t  readByte(const uint8_t addr);                                  // Read 1 byte from address on I2C  //
       void     writeByte(const uint8_t addr, const uint8_t data);             // Write 1 byte at address to I2C   //
