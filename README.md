@@ -1,3 +1,6 @@
+# WORK IN PROGRESS - do not use until this message is deleted
+
+
 # DS3231M library
 <img src="https://github.com/SV-Zanshin/DS3231M/blob/master/Images/ds3231m-real-time-clock-ic.jpg" width="175" align="right"/> *Arduino* library for accessing the maxim integrated DS3231M real time clock. This clock requires no external components and with an intern temperature-compensated oscillator it is extremely accurate.
 
