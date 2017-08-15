@@ -78,14 +78,8 @@ DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour,  //
   mm = min;                                                                   //                                  //
   ss = sec;                                                                   //                                  //
 } // of method DateTime()                                                     //----------------------------------//
-DateTime::DateTime (const DateTime& copy):                                    //                                  //
-yOff(copy.yOff),                                                              //                                  //
-m(copy.m),                                                                    //                                  //
-d(copy.d),                                                                    //                                  //
-hh(copy.hh),                                                                  //                                  //
-mm(copy.mm),                                                                  //                                  //
-ss(copy.ss)                                                                   //                                  //
-{} // of method DateTime()                                                    //                                  //
+DateTime::DateTime (const DateTime& copy):yOff(copy.yOff),m(copy.m),d(copy.d),//                                  //
+                    hh(copy.hh),mm(copy.mm),ss(copy.ss) {}                    // of method DateTime()             //                                  //
 /*******************************************************************************************************************
 ** Constructor for using "the compiler's time": DateTime now (__DATE__, __TIME__); NOTE: using F() would          **
 ** further reduce the RAM footprint, see below. The compiler date and time arrive in string format as follows:    **
@@ -181,14 +175,8 @@ TimeSpan TimeSpan::operator+(const TimeSpan& right) {                         //
 TimeSpan TimeSpan::operator-(const TimeSpan& right) {                         //                                  //
   return TimeSpan(_seconds-right._seconds);                                   //                                  //
 } // of overloaded subtract                                                   //                                  //
-/*******************************************************************************************************************
-** Class Constructor instantiates the class                                                                       **
-*******************************************************************************************************************/
-DS3231M_Class::DS3231M_Class()  {} // of class constructor                    //                                  //
-/*******************************************************************************************************************
-** Class Destructor currently does nothing and is included for compatibility purposes                             **
-*******************************************************************************************************************/
-DS3231M_Class::~DS3231M_Class() {} // of class destructor                     //                                  //
+DS3231M_Class::DS3231M_Class()  {}                                            // Unused class constructor         //
+DS3231M_Class::~DS3231M_Class() {}                                            // Unused class destructor          //
 /*******************************************************************************************************************
 ** Method begin starts I2C communications with the device, using a default address if one is not specified and    **
 ** return true if the device has been detected and false if it was not                                            **

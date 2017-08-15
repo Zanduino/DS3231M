@@ -36,7 +36,8 @@
   *****************************************************************************************************************/
   const uint32_t SECONDS_PER_DAY           =     86400;                       // 60 secs * 60 mins * 24 hours     //
   const uint32_t SECONDS_FROM_1970_TO_2000 = 946684800;                       //                                  //
-  const uint8_t  DS3231M_RTCSEC            =      0x00;                       // Register definitions             //
+  const uint8_t  DS3231M_ADDRESS           =      0x68;                       // Fixed I2C Address for DS3231M    //
+  const uint8_t  DS3231M_RTCSEC            =      0x00;                       // Register names and addresses     //
   const uint8_t  DS3231M_RTCMIN            =      0x01;                       //                                  //
   const uint8_t  DS3231M_RTCHOUR           =      0x02;                       //                                  //
   const uint8_t  DS3231M_RTCWKDAY          =      0x03;                       //                                  //
