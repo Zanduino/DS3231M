@@ -110,13 +110,14 @@
       DS3231M_Class();                                                        // Class constructor                //
       ~DS3231M_Class();                                                       // Class destructor                 //
       bool     begin();                                                       // Start I2C Comms with device      //
+      void     adjust();                                                      // Set the date and time to compile //
+      void     adjust(const DateTime& dt);                                    // Set the date and time            //
+      DateTime now();                                                         // return time                      //
+      int16_t  temperature();                                                 // return clock temperature         //
 /*
       bool     deviceStatus();                                                // return true when DS3231M is on   //
       bool     deviceStart();                                                 // Start the DS3231M clock          //
       bool     deviceStop();                                                  // Stop the DS3231M clock           //
-      DateTime now();                                                         // return time                      //
-      void     adjust();                                                      // Set the date and time to compile //
-      void     adjust(const DateTime& dt);                                    // Set the date and time            //
       int8_t   calibrate();                                                   // Reset clock calibration offset   //
       int8_t   calibrate(const int8_t);                                       // Reset clock calibration offset   //
       int8_t   calibrate(const DateTime& dt);                                 // Calibrate the clock              //
@@ -149,8 +150,6 @@
       uint8_t  bcd2int(const uint8_t bcd);                                    // convert BCD digits to integer    //
       uint8_t  int2bcd(const uint8_t dec);                                    // convert integer to BCD           //
       uint8_t  _TransmissionStatus = 0;                                       // Status of I2C transmission       //
-      bool     _CrystalStatus      = false;                                   // True if RTC is turned on         //
-      bool     _OscillatorStatus   = false;                                   // True if Oscillator on and working//
       uint32_t _SetUnixTime        = 0;                                       // UNIX time when clock last set    //
       uint8_t  _ss,_mm,_hh,_d,_m;                                             // Define date components           //
       uint16_t _y;                                                            // Define date components           //

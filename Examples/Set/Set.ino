@@ -62,10 +62,13 @@ void setup() {                                                                //
 //      delay(1000);                                                            // wait for a second                //
 //    } // of if-then oscillator didn't start                                   //                                  //
 //  } // of while the oscillator is off                                         //                                  //
-//  DS3231M.adjust();                                                           // Set to library compile Date/Time //
-//  Serial.println(F("Enter the following serial commands:"));                  //                                  //
-//  Serial.println(F("SETDATE yyyy-mm-dd hh:mm:ss"));                           //                                  //
-//  Serial.println(F("CALDATE yyyy-mm-dd hh:mm:ss"));                           //                                  //
+  DS3231M.adjust();                                                           // Set to library compile Date/Time //
+  Serial.print(F("DS3231M chip temperature is "));                            //                                  //
+  Serial.print(DS3231M.temperature()/10.0,1);                                 // Value is in 10ths of degrees     //
+  Serial.println("\xC2\xB0""C");                                              //                                  //
+  Serial.println(F("Enter the following serial commands:"));                  //                                  //
+  Serial.println(F("SETDATE yyyy-mm-dd hh:mm:ss"));                           //                                  //
+  Serial.println(F("CALDATE yyyy-mm-dd hh:mm:ss"));                           //                                  //
   pinMode(LED_PIN,OUTPUT);                                                    // Declare built-in LED as output   //
 } // of method setup()                                                        //                                  //
 /*******************************************************************************************************************
@@ -124,10 +127,10 @@ void readCommand() {                                                          //
           if (tokens!=6)                                                      // Check to see if it was parsed    //
             Serial.print(F("Unable to parse date/time\n"));                   //                                  //
           else {                                                              //                                  //
-            int8_t trim = DS3231M.calibrate(DateTime(year,month,day,          // Calibrate the crystal and return //
-                                                     hour,minute,second));    // the new trim offset value        //
-            Serial.print(F("Trim value set to "));                            //                                  //
-            Serial.print(trim*2);                                             // Each trim tick is 2 cycles       //
+//            int8_t trim = DS3231M.calibrate(DateTime(year,month,day,          // Calibrate the crystal and return //
+//                                                     hour,minute,second));    // the new trim offset value        //
+//            Serial.print(F("Trim value set to "));                            //                                  //
+//            Serial.print(trim*2);                                             // Each trim tick is 2 cycles       //
             Serial.println(F(" clock cycles every minute"));                  //                                  //
           } // of if-then-else the date could be parsed                       //                                  //
           break;                                                              //                                  //

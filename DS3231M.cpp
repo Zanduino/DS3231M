@@ -181,15 +181,12 @@ DS3231M_Class::~DS3231M_Class() {}                                            //
 ** Method begin starts I2C communications with the device, using a default address if one is not specified and    **
 ** return true if the device has been detected and false if it was not                                            **
 *******************************************************************************************************************/
-bool DS3231M_Class::begin( ) {                                                // Start I2C communications         //
+bool DS3231M_Class::begin() {                                                 // Start I2C communications         //
   Wire.begin();                                                               // Start I2C as master device       //
   Wire.beginTransmission(DS3231M_ADDRESS);                                    // Address the DS3231MM             //
   uint8_t errorCode = Wire.endTransmission();                                 // See if there's a device present  //
   if (errorCode == 0) {                                                       // If we have a DS3231MM            //
-    writeByte(DS3231M_RTCSEC,readByte(DS3231M_RTCHOUR)&B10111111);            // Use 24 hour clock                //
-    writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)|0x80);                // assert alarm low, default high   //
-    _CrystalStatus = readByte(DS3231M_RTCSEC) >> DS3231M_RTCSEC_SC;           // Status bit from register         //
-    _OscillatorStatus = readByte(DS3231M_RTCWKDAY)>> DS3231M_RTCWKDAY_OSCRUN; // Oscillator state from register   //
+    writeByte(DS3231M_RTCHOUR,readByte(DS3231M_RTCHOUR)&B10111111);           // Force use of 24 hour clock       //
   } // of if-then device detected                                             //                                  //
   else return false;                                                          // return error if no device found  //
   return true;                                                                // return success                   //
@@ -226,35 +223,25 @@ uint8_t DS3231M_Class::int2bcd(const uint8_t dec){                            //
   return ((dec/10 * 16) + (dec % 10));                                        //                                  //
 } // of method int2bcd                                                        //                                  //
 /*******************************************************************************************************************
-** Method isrunning checks to see if the DS3231M crystal has been turned on or off                                **
+** Method adjust set the current date/time. This is an overloaded function, if called with no parameters then the **
+** RTC is set to the date/time when the program was compiled and uploaded. Otherwise the values are set, but the  **
+** oscillator is stopped during the process and needs to be restarted upon completion.                            **
 *******************************************************************************************************************/
-bool DS3231M_Class::deviceStatus(){                                           // See if the crystal is running    //
-  return _CrystalStatus;                                                      // Return internal variable         //
-} // of method DeviceStatus                                                   //                                  //
-/*******************************************************************************************************************
-** Method deviceStart sets the status register to turn on the clock                                               **
-*******************************************************************************************************************/
-bool DS3231M_Class::deviceStart(){                                            // Start crystal                    //
-  writeByte(DS3231M_RTCSEC,readByte(DS3231M_RTCSEC)|B10000000);               // set the most significant bit on  //
-  _CrystalStatus    = readByte(DS3231M_RTCSEC)   >> DS3231M_RTCSEC_SC;        // Get status bit from register     //
-  for(uint8_t j=0;j<255;j++) {                                                // Loop until changed or overflow   //
-    _OscillatorStatus=readByte(DS3231M_RTCWKDAY)>>DS3231M_RTCWKDAY_OSCRUN;    // Wait for oscillator to stop      //
-    if (_OscillatorStatus) break;                                             // Exit loop on success             //
-  } // of for-next oscillator loop                                            //                                  //
-  return _OscillatorStatus;                                                   // Return state                     //
-} // of method deviceStart                                                    //                                  //
-/*******************************************************************************************************************
-** Method deviceStop sets the status register to turn off the clock                                               **
-*******************************************************************************************************************/
-bool DS3231M_Class::deviceStop(){                                             // Stop crystal                     //
-  writeByte(DS3231M_RTCSEC,readByte(DS3231M_RTCSEC)&B01111111);               // set the most significant bit off //
-  _CrystalStatus    = 0;                                                      // set to false for off status      //
-  for(uint8_t j=0;j<255;j++) {                                                // Loop until changed or overflow   //
-    _OscillatorStatus=readByte(DS3231M_RTCWKDAY)>>DS3231M_RTCWKDAY_OSCRUN;    // Wait for oscillator to stop      //
-    if (!_OscillatorStatus) break;                                            // Exit loop on success             //
-  } // of for-next oscillator loop                                            //                                  //
-  return _OscillatorStatus;                                                   // Return state                     //
-} // of method deviceStop                                                     //                                  //
+void DS3231M_Class::adjust() {                                                // Set the RTC date and Time        //
+  adjust(DateTime(F(__DATE__), F(__TIME__)));                                 // Set to compile time              //
+} // of method adjust                                                         /-----------------------------------//
+void DS3231M_Class::adjust(const DateTime& dt) {                              // Set the RTC date and Time        //
+  writeByte(DS3231M_RTCSEC,int2bcd(dt.second()));                             // Write seconds, keep device off   //
+  writeByte(DS3231M_RTCMIN,int2bcd(dt.minute()));                             // Write the minutes value          //
+  writeByte(DS3231M_RTCHOUR,int2bcd(dt.hour()));                              // Also re-sets the 24Hour clock on //
+  writeByte(DS3231M_RTCWKDAY,dt.dayOfTheWeek());                              // Update the weekday               //
+  writeByte(DS3231M_RTCDATE,int2bcd(dt.day()));                               // Write the day of month           //
+  writeByte(DS3231M_RTCMTH,int2bcd(dt.month()));                              // Month, ignore century bit        //
+  writeByte(DS3231M_RTCYEAR,int2bcd(dt.year()-2000));                         // Write the year                   //
+  writeByte(DS3231M_STATUS,readByte(DS3231M_STATUS)&B01111111);               // Unset OSC flag bit if set        //
+  writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)&B01111111);             // Unset EOSC flag bit if set       //
+  _SetUnixTime = now().unixtime();                                            // Store time of last change        //
+} // of method adjust                                                         //                                  //
 /*******************************************************************************************************************
 ** Method now() returns the current date/time                                                                     **
 ** then the power down time is returned, if the timeType = 2 then the power up time is returned. These options are**
@@ -277,9 +264,61 @@ DateTime DS3231M_Class::now(){                                                //
   return DateTime (_y, _m, _d, _hh, _mm, _ss);                                // Return class value               //
 } // of method now                                                            //                                  //
 /*******************************************************************************************************************
+** Method temperature() returns the internal temperature in tenths of degrees Celsius (this avoids having to **
+** to use floating point                                                                                          **
+*******************************************************************************************************************/
+int16_t DS3231M_Class::temperature() {                                        // See if the crystal is running    //
+  int32_t temp = readByte(DS3231M_TEMPERATURE)<<8;                            // read MSB                         //
+  temp |= readByte(DS3231M_TEMPERATURE+1);                                    // get LSB                          //
+  temp = temp>>6;                                                             // Shift over 6 bits                //
+  if(temp&0x200) temp|=0xFC00;                                                // keep negative by setting bits    //
+  temp = temp*10/4;                                                           // value is in .25C increments      //
+  return temp;                                                                // Return computed temperature      //
+} // of method temperature()                                                  //                                  //
+
+
+
+/*******************************************************************************************************************
+** Method isrunning checks to see if the DS3231M crystal has been turned on or off                                **
+*******************************************************************************************************************/
+/*
+bool DS3231M_Class::deviceStatus(){                                           // See if the crystal is running    //
+  return _CrystalStatus;                                                      // Return internal variable         //
+} // of method DeviceStatus                                                   //                                  //
+*/
+/*******************************************************************************************************************
+** Method deviceStart sets the status register to turn on the clock                                               **
+*******************************************************************************************************************/
+/*
+bool DS3231M_Class::deviceStart(){                                            // Start crystal                    //
+  writeByte(DS3231M_RTCSEC,readByte(DS3231M_RTCSEC)|B10000000);               // set the most significant bit on  //
+  _CrystalStatus    = readByte(DS3231M_RTCSEC)   >> DS3231M_RTCSEC_SC;        // Get status bit from register     //
+  for(uint8_t j=0;j<255;j++) {                                                // Loop until changed or overflow   //
+    _OscillatorStatus=readByte(DS3231M_RTCWKDAY)>>DS3231M_RTCWKDAY_OSCRUN;    // Wait for oscillator to stop      //
+    if (_OscillatorStatus) break;                                             // Exit loop on success             //
+  } // of for-next oscillator loop                                            //                                  //
+  return _OscillatorStatus;                                                   // Return state                     //
+} // of method deviceStart                                                    //                                  //
+*/
+/*******************************************************************************************************************
+** Method deviceStop sets the status register to turn off the clock                                               **
+*******************************************************************************************************************/
+/*
+bool DS3231M_Class::deviceStop(){                                             // Stop crystal                     //
+  writeByte(DS3231M_RTCSEC,readByte(DS3231M_RTCSEC)&B01111111);               // set the most significant bit off //
+  _CrystalStatus    = 0;                                                      // set to false for off status      //
+  for(uint8_t j=0;j<255;j++) {                                                // Loop until changed or overflow   //
+    _OscillatorStatus=readByte(DS3231M_RTCWKDAY)>>DS3231M_RTCWKDAY_OSCRUN;    // Wait for oscillator to stop      //
+    if (!_OscillatorStatus) break;                                            // Exit loop on success             //
+  } // of for-next oscillator loop                                            //                                  //
+  return _OscillatorStatus;                                                   // Return state                     //
+} // of method deviceStop                                                     //                                  //
+*/
+/*******************************************************************************************************************
 ** Method getPowerDown() returns the date/time that the power went off. This is set back to zero once the power   **
 ** fail flag is reset.                                                                                            **
 *******************************************************************************************************************/
+/*
 DateTime DS3231M_Class::getPowerDown() {                                      // Get the Date when power went off //
   uint8_t min,hr,day,mon;                                                     // temporary storage                //
   Wire.beginTransmission(DS3231M_ADDRESS);                                    // Address the I2C device           //
@@ -294,10 +333,12 @@ DateTime DS3231M_Class::getPowerDown() {                                      //
   } // of if-then there is data to be read                                    //                                  //
   return DateTime (0, mon, day, hr, min, 0);                                  // Return class value               //
 } // of method getPowerDown()                                                 //                                  //
+*/
 /*******************************************************************************************************************
 ** Method getPowerUp() returns the date/time that the power went off. This is set back to zero once the power     **
 ** fail flag is reset.                                                                                            **
 *******************************************************************************************************************/
+/*
 DateTime DS3231M_Class::getPowerUp() {                                        // Get the Date when power came back//
   uint8_t min,hr,day,mon;                                                     // temporary storage                //
   Wire.beginTransmission(DS3231M_ADDRESS);                                    // Address the I2C device           //
@@ -312,38 +353,22 @@ DateTime DS3231M_Class::getPowerUp() {                                        //
   } // of if-then there is data to be read                                    //                                  //
   return DateTime (0, mon, day, hr, min, 0);                                  // Return class value               //
 } // of method getPowerUp()                                                   //                                  //
-/*******************************************************************************************************************
-** Method adjust set the current date/time. This is an overloaded function, if called with no parameters then the **
-** RTC is set to the date/time when the program was compiled and uploaded. Otherwise the values are set, but the  **
-** oscillator is stopped during the process and needs to be restarted upon completion.                            **
-*******************************************************************************************************************/
-void DS3231M_Class::adjust() {                                                // Set the RTC date and Time        //
-  adjust(DateTime(F(__DATE__), F(__TIME__)));                                 // Set to compile time              //
-} // of method adjust                                                         /-----------------------------------//
-void DS3231M_Class::adjust(const DateTime& dt) {                              // Set the RTC date and Time        //
-  deviceStop();                                                               // Stop the oscillator              //
-  writeByte(DS3231M_RTCSEC,int2bcd(dt.second()));                             // Write seconds, keep device off   //
-  writeByte(DS3231M_RTCMIN,int2bcd(dt.minute()));                             // Write the minutes value          //
-  writeByte(DS3231M_RTCHOUR,int2bcd(dt.hour()));                              // Also re-sets the 24Hour clock on //
-  writeByte(DS3231M_RTCWKDAY,dt.dayOfTheWeek());                              // Update the weekday               //
-  writeByte(DS3231M_RTCDATE,int2bcd(dt.day()));                               // Write the day of month           //
-  writeByte(DS3231M_RTCMTH,int2bcd(dt.month()));                              // Month, ignore R/O leapyear bit   //
-  writeByte(DS3231M_RTCYEAR,int2bcd(dt.year()-2000));                         // Write the year                   //
-  deviceStart();                                                              // Restart the oscillator           //
-  _SetUnixTime = now().unixtime();                                            // Store time of last change        //
-} // of method adjust                                                         //                                  //
+*/
 /*******************************************************************************************************************
 ** Method weekdayRead will read the weekday number from the RTC. This number is user-settable and is incremented  **
 ** when the day shifts. It is set as part of the adjust() method where Monday is weekday 1                        **
 *******************************************************************************************************************/
+/*
 uint8_t DS3231M_Class::weekdayRead() {                                        // Read the DOW from the RTC        //
   uint8_t dow = readByte(DS3231M_RTCWKDAY) & B00000111;                       // no need to convert, values 1-7   //
   return dow;                                                                 // return the value                 //
 } // of method weekdayRead()                                                  //                                  //
+*/
 /*******************************************************************************************************************
 ** Method weekdaywrite will write the weekday (1-7) to the register and return the setting. If the input value is **
 ** out of range then nothing will be written and a 0 will be returned.                                            **
 *******************************************************************************************************************/
+/*
 uint8_t DS3231M_Class::weekdayWrite(const uint8_t dow) {                      // Write the DOW to the RTC         //
   uint8_t retval = 0;                                                         // assume we have an error          //
   if (dow>0 && dow<8) {                                                       // If parameter is in range, then   //
@@ -352,6 +377,7 @@ uint8_t DS3231M_Class::weekdayWrite(const uint8_t dow) {                      //
     } // of if-then we have a good DOW                                        //                                  //
   return dow;                                                                 // return the value                 //
 } // of method weekdayWrite()                                                 //                                  //
+*/
 /*******************************************************************************************************************
 ** Method calibrate(). This function accepts a current date/time value and compares that to the current date/time **
 ** of the RTC and computes a calibration factor depending upon the time difference between the two and how long   **
@@ -363,6 +389,7 @@ uint8_t DS3231M_Class::weekdayWrite(const uint8_t dow) {                      //
 ** The ppm <> 130 is computed by solving the equation for the maximum TRIM value of 127 and computing the         **
 ** corresponding max and min values for ppm. This allows the trim variable to be one byte rather than a long      **
 *******************************************************************************************************************/
+/*
 int8_t DS3231M_Class::calibrate(const int8_t newTrim) {                       // Calibrate the RTC                //
   int8_t trim = newTrim;                                                      // Make a local copy                //
   if (trim<0) trim = B10000000 | (trim*-1);                                   // Set non-excess 128 negative val  //
@@ -386,26 +413,32 @@ int8_t DS3231M_Class::calibrate(const DateTime& dt) {                         //
   adjust(dt);                                                                 // Set the new date value           //
   return trim;                                                                // return the computed trim value   //
 } // of method calibrate()                                                    //                                  //
+*/
 /*******************************************************************************************************************
 ** Method getCalibrationTrim(). This function returns the TRIMVAL trim values. Since the number in the register   **
 ** can be negative but is not in excess-128 format any negative numbers need to be manipulated before returning   **
 *******************************************************************************************************************/
+/*
 int8_t DS3231M_Class::getCalibrationTrim() {                                  // Get the trim register value      //
   int8_t trim = readByte(DS3231M_OSCTRIM);                                    // read the register                //
   if (trim>>7) trim = (B01111111&trim) * -1;                                  // if negative convert to excess128 //
   return(trim);                                                               // return the trim value            //
 } // of method getCalibrationTrim()                                           //                                  //
+*/
 /*******************************************************************************************************************
 ** Method calibrate() when called with no parameters means that the current calibration offset is set back to 0   **
 *******************************************************************************************************************/
+/*
 int8_t DS3231M_Class::calibrate() {                                           // Calibrate the RTC                //
   writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)&B11111011);             // fine trim mode on, to be safe    //
   writeByte(DS3231M_OSCTRIM,(uint8_t)0);                                      // Write zeros to the trim register //
 } // of method calibrate()                                                    //                                  //
+*/
 /*******************************************************************************************************************
 ** Method setMFP() will set the MFP (Multifunction Pin) to the requested state and return success if, and only if,**
 ** the Square Wave enable is not turned on and both ALARM 0 and 1 are turned off, other it returns a false        **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::setMFP(const bool value) {                                // Set the MFP pin state            //
   uint8_t registerValue = readByte(DS3231M_CONTROL);                          // Get Control register             //
   if (registerValue&B01110000 != 0) return false;                             // Error if SQWEN/ALM1EN/ALM0EN set //
@@ -413,10 +446,12 @@ bool DS3231M_Class::setMFP(const bool value) {                                //
             (value<<DS3231M_CONTROL_OUT));                                    //                                  //
   return true;                                                                // Return success                   //
 } // of method setMFP()                                                       //                                  //
+*/
 /*******************************************************************************************************************
 ** Method getMFP() will get the MFP (Multifunction Pin) state. On is true and Off is false. This is read from the **
 ** control register if no alarms are enabled, otherwise the two alarm states must be checked.                     **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::getMFP() {                                                // Get the MFP pin state            //
   uint8_t controlRegister = readByte(DS3231M_CONTROL);                        // Get control register contents    //
   bool registerValue = 0;                                                     // Store return value               //
@@ -428,6 +463,7 @@ bool DS3231M_Class::getMFP() {                                                //
     registerValue = (readByte(DS3231M_CONTROL)>>DS3231M_CONTROL_OUT)&1;       // "OUT" bit of the MFP             //
   return registerValue;                                                       // Return value                     //
 } // of method getMFP()                                                       //                                  //
+*/
 /*******************************************************************************************************************
 ** Method setAlarm will set one of the 2 alarms.                                                                  **
 **                                                                                                                **
@@ -439,7 +475,7 @@ bool DS3231M_Class::getMFP() {                                                //
 ** 5. Based on the selected alarm mask, load the alarm match value into the appropriate register(s)               **
 ** 6. Enable the alarm module by setting the ALMxEN bit                                                           **
 *******************************************************************************************************************/
-bool DS3231M_Class::setAlarm(const uint8_t alarmNumber,                       // Alarm number 0 or 1              //
+/*bool DS3231M_Class::setAlarm(const uint8_t alarmNumber,                       // Alarm number 0 or 1              //
                              const uint8_t alarmType,                         // Alarm type 0-7, see above        //
                              const DateTime dt,                               // Date/Time to set alarm from      //
                              const bool state = true) {                       //                                  //
@@ -464,10 +500,12 @@ bool DS3231M_Class::setAlarm(const uint8_t alarmNumber,                       //
   } // of if-then alarmNumber and alarmType are valid and device running      //                                  //
   return success;                                                             // return the status                //
 } // of method setAlarm                                                       //                                  //
+*/
 /*******************************************************************************************************************
 ** Method getAlarm will return the date/time settings for the given alarm and update the alarmType parameter with **
 ** the alarm type that was set                                                                                    **
 *******************************************************************************************************************/
+/*
 DateTime DS3231M_Class::getAlarm(const uint8_t alarmNumber,                   // Return alarm date/time & type    //
                                  uint8_t &alarmType) {                        //                                  //
   uint8_t registerOffset = 0;                                                 // Default to Alarm 0 registers     //
@@ -481,9 +519,11 @@ DateTime DS3231M_Class::getAlarm(const uint8_t alarmNumber,                   //
   uint16_t y = 0;                                                             // Year is not part of the alarms   //
   return DateTime (y, m, d, hh, mm, ss);                                      // Return class value               //
 } // of method getAlarm()                                                     //                                  //
+*/
 /*******************************************************************************************************************
 ** Method clearAlarm will clear a set alarm by re-writing the same contents back to the register                  **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::clearAlarm(const uint8_t alarmNumber) {                   // Clear an Alarm                   //
   if (alarmNumber>1) return false;                                            // return an error if bad alarm no. //
   uint8_t registerOffset = DS3231M_ALM0WKDAY;                                 // Default to Alarm 0 registers     //
@@ -491,24 +531,30 @@ bool DS3231M_Class::clearAlarm(const uint8_t alarmNumber) {                   //
   writeByte(registerOffset,readByte(registerOffset)&B11110111);               // Writing to register clears bit   //
   return true;                                                                // return success                   //
 } // of method clearAlarm()                                                   //                                  //
+*/
 /*******************************************************************************************************************
 ** Method setAlarmState() will turn an alarm on or off without changing the alarm condition                       **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::setAlarmState(const uint8_t alarmNumber,const bool state){// Set alarm to on or off           //
   if(alarmNumber>1) return false;                                             // if not alarm 0 or 1 then error   //
   writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)^(state<<(4+alarmNumber)));// Set appropriate bit in register//
   return(true);                                                               // Return success                   //
 } // of setAlarmState()                                                       //                                  //
+*/
 /*******************************************************************************************************************
 ** Method getAlarmState() will return whether an alarm is turned on or off                                        **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::getAlarmState(const uint8_t alarmNumber) {                // Set alarm to on or off           //
   bool state = readByte(DS3231M_CONTROL)>>(4+alarmNumber)&B00000001;          // Get state of alarm               //
   return (state);                                                             // Return state of alarm            //
 } // of getAlarmState()                                                       //                                  //
+*/
 /*******************************************************************************************************************
 ** Method isAlarm will return whether an alarm is active or not                                                   **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::isAlarm(const uint8_t alarmNumber) {                      // Return alarm status              //
   if (alarmNumber>1) return false;                                            // return an error if bad alarm no. //
   uint8_t registerNumber = DS3231M_ALM0WKDAY;                                 // Default to Alarm 0 registers     //
@@ -516,20 +562,24 @@ bool DS3231M_Class::isAlarm(const uint8_t alarmNumber) {                      //
   bool alarmValue = (readByte(registerNumber)>>3)&B00000001;                  // Return just 3rd bit in register  //
   return alarmValue;                                                          // return whether active or not     //
 } // of method clearAlarm()                                                   //                                  //
+*/
 /*******************************************************************************************************************
 ** Method getSQWSpeed will return the list value for the frequency of the square wave. Values are B00 for 1Hz,    **
 ** B01 for 4.096kHz, B10 for 8.192kHz and B11 for 32.768kHz. If square wave is not turned on then a 0 is returned **
 *******************************************************************************************************************/
+/*
 uint8_t DS3231M_Class::getSQWSpeed() {                                         // Return the SQW frequency code   //
   uint8_t frequency = readByte(DS3231M_CONTROL);                               // Read the control register       //
   if (frequency&B01000000) return(frequency&B11);                              // return 2 bits if SQW enabled    //
                       else return(0);                                          // otherwise return 0              //
 } // of method getSQWSpeed()                                                   //                                 //
+*/
 /*******************************************************************************************************************
 ** Method setSQWSpeed will set the square wave speed to a value. Values are B00 for 1Hz, B01 for 4.096kHz, B10    **
 ** for 8.192kHz and B11 for 32.768kHz. By default the square wave is also turned on, but the optional setState    **
 ** parameter changes that initial state. The return value is the state of the SQW after setting                   **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::setSQWSpeed(uint8_t frequency, bool setState = true) {     // Set the SQW frequency code      //
   uint8_t registerValue = readByte(DS3231M_CONTROL);                           // read the register to a variable //
   registerValue &= B10111100;                                                  // Mask SQW state and speed bits   //
@@ -538,47 +588,58 @@ bool DS3231M_Class::setSQWSpeed(uint8_t frequency, bool setState = true) {     /
   writeByte(DS3231M_CONTROL,registerValue);                                    // Write register settings         //
   return(setState);                                                            // Return whether enabled or not   //
 } // of method setSQWState()                                                   //                                 //
+*/
 /*******************************************************************************************************************
 ** Method setSQWState will turn on the square wave generator bit                                                  **
 *******************************************************************************************************************/
-bool DS3231M_Class::setSQWState(const bool state) {                            // Set the SQW frequency state     //
+/*bool DS3231M_Class::setSQWState(const bool state) {                            // Set the SQW frequency state     //
   writeByte(DS3231M_CONTROL,(readByte(DS3231M_CONTROL)&B10111111)|state<<6);   // set the one bit to state        //
   return(state);                                                               // Return whether enabled or not   //
 } // of method setSQWState                                                     //                                 //
+*/
 /*******************************************************************************************************************
 ** Method getSQWState will turn on the square wave generator bit                                                  **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::getSQWState() {                                            // Get the SQW frequency state     //
   bool returnValue = (readByte(DS3231M_CONTROL)>>6)&1;                         // get 6th bit                     //
   return(returnValue);                                                         // return the result               //
 } // of method getSQWState()                                                   //                                 //
+*/
 /*******************************************************************************************************************
 ** Method setBattery() will enable or disable battery backup for the DS3231MN and have no effect on the DS3231MM  **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::setBattery(const bool state) {                             // Enable or disable battery backup//
   writeByte(DS3231M_RTCWKDAY,                                                  // use the 3rd bit                 //
             (readByte(DS3231M_RTCWKDAY)&B11110111)|(state<<3));                //                                 //
   return(state);                                                               // return the result               //
 } // of method setBattery()                                                    //                                 //
+*/
 /*******************************************************************************************************************
 ** Method getBattery() will return true if the battery backup mode is enabled, otherwise return a 0.              //
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::getBattery() {                                             // Return battery backup state     //
   bool returnValue = (readByte(DS3231M_RTCWKDAY)>>3)&1;                        // use the 3rd bit                 //
   return(returnValue);                                                         // return the result               //
 } // of method setBattery()                                                    //                                 //
+*/
 /*******************************************************************************************************************
 ** Method getPowerFail() will return true if a power fail has occurred and the flag hasn't been reset             **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::getPowerFail() {                                           // Return true on power fail state //
   bool returnValue = (readByte(DS3231M_RTCWKDAY)>>4)&1;                        // use the 4th bit                 //
   return(returnValue);                                                         // return the result               //
 } // of method getPowerFail()                                                  //                                 //
+*/
 /*******************************************************************************************************************
 ** Method clearPowerFail() will clear the power fail flag                                                         **
 *******************************************************************************************************************/
+/*
 bool DS3231M_Class::clearPowerFail() {                                         // Clear the power fail flag       //
   writeByte(DS3231M_RTCWKDAY,readByte(DS3231M_RTCWKDAY));                      // Write back register to clear    //
   return(0);                                                                   // return the result               //
 } // of method clearPowerFail()                                                //                                 //
- 
+*/ 
