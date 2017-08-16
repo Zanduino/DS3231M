@@ -37,11 +37,11 @@
   const uint32_t SECONDS_PER_DAY           =     86400;                       // 60 secs * 60 mins * 24 hours     //
   const uint32_t SECONDS_FROM_1970_TO_2000 = 946684800;                       //                                  //
   const uint8_t  DS3231M_ADDRESS           =      0x68;                       // Fixed I2C Address for DS3231M    //
-  const uint8_t  DS3231M_RTCSEC            =      0x00;                       // Register names and addresses     //
-  const uint8_t  DS3231M_RTCMIN            =      0x01;                       //                                  //
-  const uint8_t  DS3231M_RTCHOUR           =      0x02;                       //                                  //
-  const uint8_t  DS3231M_RTCWKDAY          =      0x03;                       //                                  //
-  const uint8_t  DS3231M_RTCDATE           =      0x04;                       //                                  //
+  const uint8_t  DS3231M_RTCSEC            =      0x00;                       // Register names and addresses,    //
+  const uint8_t  DS3231M_RTCMIN            =      0x01;                       // declare all possible registers   //
+  const uint8_t  DS3231M_RTCHOUR           =      0x02;                       // and if the variables are unused  //
+  const uint8_t  DS3231M_RTCWKDAY          =      0x03;                       // no space will be allocated by    //
+  const uint8_t  DS3231M_RTCDATE           =      0x04;                       // the compiler                     //
   const uint8_t  DS3231M_RTCMTH            =      0x05;                       //                                  //
   const uint8_t  DS3231M_RTCYEAR           =      0x06;                       //                                  //
   const uint8_t  DS3231M_ALM1SEC           =      0x07;                       //                                  //
@@ -109,11 +109,11 @@
     public:                                                                   // Publicly visible methods         //
       DS3231M_Class();                                                        // Class constructor                //
       ~DS3231M_Class();                                                       // Class destructor                 //
-      bool     begin();                                                       // Start I2C Comms with device      //
+      bool     begin();                                                       // Start I2C Communications         //
       void     adjust();                                                      // Set the date and time to compile //
       void     adjust(const DateTime& dt);                                    // Set the date and time            //
       DateTime now();                                                         // return time                      //
-      int16_t  temperature();                                                 // return clock temperature         //
+      int16_t  temperature();                                                 // return clock temp in 10x °C      //
 /*
       bool     deviceStatus();                                                // return true when DS3231M is on   //
       bool     deviceStart();                                                 // Start the DS3231M clock          //
