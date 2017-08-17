@@ -275,6 +275,52 @@ int16_t DS3231M_Class::temperature() {                                        //
   temp = temp*10/4;                                                           // value is in .25C increments      //
   return temp;                                                                // Return computed temperature      //
 } // of method temperature()                                                  //                                  //
+/*******************************************************************************************************************
+** Method setAlarm will set one of the 2 alarms. As the two alarms aren't identical in what will trigger them,    **
+** this call just allows the caller to set the type of alarm using the "alarmType" parameter and the function     **
+** will choose the actual alarm to set                                                                            **
+*******************************************************************************************************************/
+bool DS3231M_Class::setAlarm(const uint8_t alarmType,                         // Alarm type enumeration, see above//
+                             const DateTime dt,                               // Date/Time to set alarm from      //
+                             const bool state = true) {                       //                                  //
+  bool success = false;                                                       // Assume no success                //
+  if (alarmType>=UnknownAlarm) return success;                                // Don't do anything if out-of-range//
+  switch (alarmType) {  
+    case everySecond:
+      break;
+  
+  } // of switch alarmType  
+  
+  
+    enum alarmTypes {everySecond,everyMinute,secondsMatch,secondsMinutesMatch,  // Enumeration of the types of      //
+      secondsMinutesHoursMatch,secondsMinutesHoursDateMatch,     // alarm that can be set            //
+      secondsMinutesHoursDayMatch,minutesMatch,minutesHoursMatch,//                                  //
+    minutesHoursDateMatch,minutesHoursDayMatch,UnknownAlarm};  //                                  //
+
+  
+  if (alarmNumber<2&&alarmType<8&&alarmType!=5&&alarmType!=6&&deviceStart()){ // if parameters and oscillator OK  //
+    if (alarmNumber==0)                                                       // Turn off either alarm 0 or alarm //
+      writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)&B11101111);         // 1 depending on parameter         //
+    else                                                                      //                                  //
+      writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)&B11011111);         //                                  //
+    uint8_t registerOffset = 0;                                               // Default to Alarm 0 registers     //
+    if (alarmNumber==1) registerOffset = 7;                                   // Otherwise use Alarm 1 registers  //
+    uint8_t workRegister = readByte(DS3231M_ALM0WKDAY+registerOffset)&B1000;  // Keep alarm interrupt flag bit    //
+    workRegister |= alarmType<<4;                                             // Set 3 bits from alarmType        //
+    workRegister |= readByte(DS3231M_RTCWKDAY)&B00000111;                     // Set 3 bits for dow from register //
+    writeByte(DS3231M_ALM0WKDAY+registerOffset,workRegister);                 // Write alarm mask                 //
+    writeByte(DS3231M_ALM0SEC+registerOffset,int2bcd(dt.second()));           // Write seconds, keep device off   //
+    writeByte(DS3231M_ALM0MIN+registerOffset,int2bcd(dt.minute()));           // Write the minutes value          //
+    writeByte(DS3231M_ALM0HOUR+registerOffset,int2bcd(dt.hour()));            // Also re-sets the 24Hour clock on //
+    writeByte(DS3231M_ALM0DATE+registerOffset,int2bcd(dt.day()));             // Write the day of month           //
+    writeByte(DS3231M_ALM0MTH+registerOffset,int2bcd(dt.month()));            // Month, ignore R/O leapyear bit   //
+    setAlarmState(alarmNumber,state);                                         // Set the requested alarm to state //
+  } // of if-then alarmNumber and alarmType are valid and device running      //                                  //
+  
+  
+  return success;                                                             // return the status                //
+} // of method setAlarm                                                       //                                  //
+
 
 
 
@@ -468,43 +514,6 @@ bool DS3231M_Class::getMFP() {                                                //
     registerValue = (readByte(DS3231M_CONTROL)>>DS3231M_CONTROL_OUT)&1;       // "OUT" bit of the MFP             //
   return registerValue;                                                       // Return value                     //
 } // of method getMFP()                                                       //                                  //
-*/
-/*******************************************************************************************************************
-** Method setAlarm will set one of the 2 alarms.                                                                  **
-**                                                                                                                **
-** In order to configure the alarm modules, the following steps need to be performed in order:                    **
-** 1. Load the timekeeping registers and enable the oscillator                                                    **
-** 2. Configure the ALMxMSK<2:0> bits to select the desired alarm mask                                            **
-** 3. Set or clear the ALMPOL bit according to the desired output polarity                                        **
-** 4. Ensure the ALMxIF flag is cleared                                                                           **
-** 5. Based on the selected alarm mask, load the alarm match value into the appropriate register(s)               **
-** 6. Enable the alarm module by setting the ALMxEN bit                                                           **
-*******************************************************************************************************************/
-/*bool DS3231M_Class::setAlarm(const uint8_t alarmNumber,                       // Alarm number 0 or 1              //
-                             const uint8_t alarmType,                         // Alarm type 0-7, see above        //
-                             const DateTime dt,                               // Date/Time to set alarm from      //
-                             const bool state = true) {                       //                                  //
-  bool success = false;                                                       // Assume no success                //
-  if (alarmNumber<2&&alarmType<8&&alarmType!=5&&alarmType!=6&&deviceStart()){ // if parameters and oscillator OK  //
-    if (alarmNumber==0)                                                       // Turn off either alarm 0 or alarm //
-      writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)&B11101111);         // 1 depending on parameter         //
-    else                                                                      //                                  //
-      writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)&B11011111);         //                                  //
-    uint8_t registerOffset = 0;                                               // Default to Alarm 0 registers     //
-    if (alarmNumber==1) registerOffset = 7;                                   // Otherwise use Alarm 1 registers  //
-    uint8_t workRegister = readByte(DS3231M_ALM0WKDAY+registerOffset)&B1000;  // Keep alarm interrupt flag bit    //
-    workRegister |= alarmType<<4;                                             // Set 3 bits from alarmType        //
-    workRegister |= readByte(DS3231M_RTCWKDAY)&B00000111;                     // Set 3 bits for dow from register //
-    writeByte(DS3231M_ALM0WKDAY+registerOffset,workRegister);                 // Write alarm mask                 //
-    writeByte(DS3231M_ALM0SEC+registerOffset,int2bcd(dt.second()));           // Write seconds, keep device off   //
-    writeByte(DS3231M_ALM0MIN+registerOffset,int2bcd(dt.minute()));           // Write the minutes value          //
-    writeByte(DS3231M_ALM0HOUR+registerOffset,int2bcd(dt.hour()));            // Also re-sets the 24Hour clock on //
-    writeByte(DS3231M_ALM0DATE+registerOffset,int2bcd(dt.day()));             // Write the day of month           //
-    writeByte(DS3231M_ALM0MTH+registerOffset,int2bcd(dt.month()));            // Month, ignore R/O leapyear bit   //
-    setAlarmState(alarmNumber,state);                                         // Set the requested alarm to state //
-  } // of if-then alarmNumber and alarmType are valid and device running      //                                  //
-  return success;                                                             // return the status                //
-} // of method setAlarm                                                       //                                  //
 */
 /*******************************************************************************************************************
 ** Method getAlarm will return the date/time settings for the given alarm and update the alarmType parameter with **

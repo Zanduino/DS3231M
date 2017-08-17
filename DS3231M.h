@@ -28,6 +28,13 @@
 #ifndef DS3231M_h                                                             // Guard code definition            //
   #define DS3231M_h                                                           // Define the name inside guard code//
   /*****************************************************************************************************************
+  ** Declare enumerated types used in the class                                                                   **
+  *****************************************************************************************************************/
+  enum alarmTypes {everySecond,everyMinute,secondsMatch,secondsMinutesMatch,  // Enumeration of the types of      //
+                   secondsMinutesHoursMatch,secondsMinutesHoursDateMatch,     // alarm that can be set            //
+                   secondsMinutesHoursDayMatch,minutesMatch,minutesHoursMatch,//                                  //
+                   minutesHoursDateMatch,minutesHoursDayMatch,UnknownAlarm};  //                                  //
+  /*****************************************************************************************************************
   ** Declare classes used in within the class                                                                     **
   *****************************************************************************************************************/
   class TimeSpan;                                                             //                                  //
@@ -114,6 +121,8 @@
       void     adjust(const DateTime& dt);                                    // Set the date and time            //
       DateTime now();                                                         // return time                      //
       int16_t  temperature();                                                 // return clock temp in 10x °C      //
+      bool     setAlarm(const uint8_t alarmNumber, const uint8_t alarmType,   // Set an Alarm                     //
+      const DateTime dt, const bool state = true );         //                                  //
 /*
       bool     deviceStatus();                                                // return true when DS3231M is on   //
       bool     deviceStart();                                                 // Start the DS3231M clock          //
@@ -126,8 +135,6 @@
       uint8_t  weekdayWrite(const uint8_t dow);                               // Write weekday to RTC             //
       bool     setMFP(const bool value);                                      // Set the MFP pin state            //
       bool     getMFP();                                                      // Get the MFP pin state            //
-      bool     setAlarm(const uint8_t alarmNumber, const uint8_t alarmType,   // Set an Alarm                     //
-                        const DateTime dt, const bool state = true );         //                                  //
       DateTime getAlarm(const uint8_t alarmNumber, uint8_t &alarmType);       // Return alarm date/time & type    //
       bool     clearAlarm(const uint8_t alarmNumber);                         // Clear an Alarm                   //
       bool     setAlarmState(const uint8_t alarmNumber, const bool state);    // Return if alarm is on or off     //
