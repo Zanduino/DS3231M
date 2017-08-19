@@ -1,7 +1,10 @@
 /*******************************************************************************************************************
 ** Class definition header for the DS3231M real-time-clock from Maxim integrated, described at                    **
 ** https://www.maximintegrated.com/en/products/digital/real-time-clocks/DS3231M.html. The DS3231M's data sheet is **
-** located at https://datasheets.maximintegrated.com/en/ds/DS3231M.pdf.                                            **
+** located at https://datasheets.maximintegrated.com/en/ds/DS3231M.pdf.                                           **
+**                                                                                                                **
+** The most recent version of this library can be found at https://github.com/SV-Zanshin/DS3231M and a detailed   **
+** library description is on the library's wiki at https://github.com/SV-Zanshin/DS3231M/wiki                     **
 **                                                                                                                **
 ** Use is made of portions of Adafruit's RTClib Version 1.2.0 at https://github.com/adafruit/RTClib which is a    **
 ** a fork of the original RTClib from Jeelabs. The code encompasses simple classes for time and date.             **
@@ -20,6 +23,7 @@
 **                                                                                                                **
 ** Vers.  Date       Developer           Comments                                                                 **
 ** ====== ========== =================== ======================================================================== **
+** 1.0.0  2017-08-19 Arnd@SV-Zanshin.Com Initial release                                                          **
 ** 1.0.0b 2017-08-13 Arnd@SV-Zanshin.Com Initial coding                                                           **
 **                                                                                                                **
 *******************************************************************************************************************/
@@ -30,10 +34,10 @@
   /*****************************************************************************************************************
   ** Declare enumerated types used in the class                                                                   **
   *****************************************************************************************************************/
-  enum alarmTypes {everySecond,everyMinute,secondsMatch,secondsMinutesMatch,  // Enumeration of the types of      //
-                   secondsMinutesHoursMatch,secondsMinutesHoursDateMatch,     // alarm that can be set            //
-                   secondsMinutesHoursDayMatch,minutesMatch,minutesHoursMatch,//                                  //
-                   minutesHoursDateMatch,minutesHoursDayMatch,UnknownAlarm};  //                                  //
+  enum alarmTypes {everySecond,secondsMatch,secondsMinutesMatch,              // Enumeration of the types of      //
+       secondsMinutesHoursMatch,secondsMinutesHoursDateMatch,                 // alarm that can be set            //
+       secondsMinutesHoursDayMatch,everyMinute,minutesMatch,minutesHoursMatch,//                                  //
+       minutesHoursDateMatch,minutesHoursDayMatch,UnknownAlarm};              //                                  //
   /*****************************************************************************************************************
   ** Declare classes used in within the class                                                                     **
   *****************************************************************************************************************/
@@ -121,36 +125,17 @@
       void     adjust(const DateTime& dt);                                    // Set the date and time            //
       DateTime now();                                                         // return time                      //
       int16_t  temperature();                                                 // return clock temp in 10x °C      //
-      bool     setAlarm(const uint8_t alarmNumber, const uint8_t alarmType,   // Set an Alarm                     //
-      const DateTime dt, const bool state = true );         //                                  //
-/*
-      bool     deviceStatus();                                                // return true when DS3231M is on   //
-      bool     deviceStart();                                                 // Start the DS3231M clock          //
-      bool     deviceStop();                                                  // Stop the DS3231M clock           //
-      int8_t   calibrate();                                                   // Reset clock calibration offset   //
-      int8_t   calibrate(const int8_t);                                       // Reset clock calibration offset   //
-      int8_t   calibrate(const DateTime& dt);                                 // Calibrate the clock              //
-      int8_t   getCalibrationTrim();                                          // Get the trim register value      //
+      void     setAlarm(const uint8_t alarmType,                              // Set an Alarm                     //
+                        const DateTime dt, const bool state = true );         //                                  //
+      bool     isAlarm();                                                     // Return if alarm is triggered     //
+      void     clearAlarm();                                                  // Clear the alarm state flag       //
+      void     kHz32(const bool state);                                       // Turn 32kHz output on or off      //
+      int8_t   getAgingOffset();                                              // Get the clock's aging offset     //
+      void     setAgingOffset(const int8_t agingOffset);                      // Get the clock's aging offset     //
       uint8_t  weekdayRead();                                                 // Read weekday from RTC            //
       uint8_t  weekdayWrite(const uint8_t dow);                               // Write weekday to RTC             //
-      bool     setMFP(const bool value);                                      // Set the MFP pin state            //
-      bool     getMFP();                                                      // Get the MFP pin state            //
-      DateTime getAlarm(const uint8_t alarmNumber, uint8_t &alarmType);       // Return alarm date/time & type    //
-      bool     clearAlarm(const uint8_t alarmNumber);                         // Clear an Alarm                   //
-      bool     setAlarmState(const uint8_t alarmNumber, const bool state);    // Return if alarm is on or off     //
-      bool     getAlarmState(const uint8_t alarmNumber);                      // Return if alarm is on or off     //
-      bool     isAlarm(const uint8_t alarmNumber);                            // Return if alarm is triggered     //
-      uint8_t  getSQWSpeed();                                                 // Return the SQW frequency code    //
-      bool     setSQWSpeed(uint8_t frequency, bool setState = true);          // Set the SQW frequency to code    //
-      bool     setSQWState(const bool state);                                 // Set the SQW MFP on or off        //
-      bool     getSQWState();                                                 // Return if the SQW is active      //
-      bool     setBattery(const bool state);                                  // Enable or disable battery backup //
-      bool     getBattery();                                                  // Get the battery backup state     //
-      bool     getPowerFail();                                                // Check if power fail has occurred //
-      bool     clearPowerFail();                                              // Clear the power fail flag        //
-      DateTime getPowerDown();                                                // Return date when power failed    //
-      DateTime getPowerUp();                                                  // Return date when power restored  //
-*/
+      void     pinAlarm();                                                    // Make the INTSQW go up on alarm   //
+      void     pinSquareWave();                                               // Make the INTSQW be a 1Hz signal  //
     private:                                                                  // Private methods                  //
       uint8_t  readByte(const uint8_t addr);                                  // Read 1 byte from address on I2C  //
       void     writeByte(const uint8_t addr, const uint8_t data);             // Write 1 byte at address to I2C   //

@@ -17,7 +17,7 @@
 **                                                                                                                **
 ** Vers.  Date       Developer           Comments                                                                 **
 ** ====== ========== =================== ======================================================================== **
-** 1.0.0  2017-08-13 Arnd@SV-Zanshin.Com Initial coding                                                           **
+** 1.0.0  2017-08-19 Arnd@SV-Zanshin.Com Initial coding                                                           **
 **                                                                                                                **
 *******************************************************************************************************************/
 #include <DS3231M.h>                                                          // Include the DS3231M RTC library  //
@@ -25,8 +25,8 @@
 ** Declare all program constants                                                                                  **
 *******************************************************************************************************************/
 const uint32_t SERIAL_SPEED        = 115200;                                  // Set the baud rate for Serial I/O //
+const uint8_t  LED_PIN             =     13;                                  // Arduino built-in LED pin number  //
 const uint8_t  SPRINTF_BUFFER_SIZE =     32;                                  // Buffer size for sprintf()        //
-const uint8_t  LED_PIN             =     13;                                  // Built-in Arduino green LED pin   //
 /*******************************************************************************************************************
 ** Declare global variables and instantiate classes                                                               **
 *******************************************************************************************************************/
@@ -37,7 +37,6 @@ char          inputBuffer[SPRINTF_BUFFER_SIZE];                               //
 ** and then control goes to the main loop, which loop indefinately.                                               **
 *******************************************************************************************************************/
 void setup() {                                                                // Arduino standard setup method    //
-  pinMode(LED_PIN,OUTPUT);                                                    // Make the LED light an output pin //
   Serial.begin(SERIAL_SPEED);                                                 // Start serial port at Baud rate   //
   #ifdef  __AVR_ATmega32U4__                                                  // If this is a 32U4 processor, then//
     delay(3000);                                                              // wait 3 seconds for the serial    //
@@ -54,72 +53,22 @@ void setup() {                                                                //
     Serial.println(F("Unable to find DS3231MM. Checking again in 3s."));      // Show error text                  //
     delay(3000);                                                              // wait a second                    //
   } // of loop until device is located                                        //                                  //
-  DS3231M.pinSquareWave();                                                    // Make INT/SQW pin toggle at 1Hz   //
   Serial.println(F("DS3231M initialized."));                                  //                                  //
   DS3231M.adjust();                                                           // Set to library compile Date/Time //
+  Serial.print(F("Date/Time set to compile time: "));                         //                                  //
+  DateTime now = DS3231M.now();                                               // get the current time             //
+  sprintf(inputBuffer,"%04d-%02d-%02d %02d:%02d:%02d", now.year(),            // Use sprintf() to pretty print    //
+          now.month(), now.day(), now.hour(), now.minute(), now.second());    // date/time with leading zeros     //
+  Serial.println(inputBuffer);                                                // Display the current date/time    //
   Serial.print(F("DS3231M chip temperature is "));                            //                                  //
   Serial.print(DS3231M.temperature()/10.0,1);                                 // Value is in 10ths of degrees     //
   Serial.println("\xC2\xB0""C");                                              //                                  //
-  Serial.println(F("\nEnter on of the following serial commands:"));          //                                  //
-  Serial.println(F("SETDATE yyyy-mm-dd hh:mm:ss"));                           //                                  //
+  Serial.println(F("Setting alarm to go off in 12 seconds."));                //                                  //
+  DS3231M.setAlarm(secondsMinutesHoursDateMatch,now+TimeSpan(0,0,0,12));      // Alarm in 12 seconds              //
+  Serial.println(F("Setting INT/SQW pin to toggle at 1Hz."));                 //                                  //
+  DS3231M.pinSquareWave();                                                    // Make 1Hz signal on INT/SQW pin   //
+  pinMode(LED_PIN,INPUT);                                                     // Declare built-in LED as input    //
 } // of method setup()                                                        //                                  //
-/*******************************************************************************************************************
-** Method readCommand(). This function checks the serial port to see if there has been any input. If there is data**
-** it is read until a terminator is discovered and then the command is parsed and acted upon                      **
-*******************************************************************************************************************/
-void readCommand() {                                                          //                                  //
-  static uint8_t inputBytes = 0;                                              // Variable for buffer position     //
-  while (Serial.available()) {                                                // Loop while incoming serial data  //
-    inputBuffer[inputBytes] = Serial.read();                                  // Get the next byte of data        //
-    if (inputBuffer[inputBytes]!='\n' && inputBytes<SPRINTF_BUFFER_SIZE)      // keep on reading until a newline  //
-      inputBytes++;                                                           // shows up or the buffer is full   //
-    else {                                                                    //                                  //
-      inputBuffer[inputBytes] = 0;                                            // Add the termination character    //
-      for (uint8_t i=0;i<inputBytes;i++)                                      // Convert the whole input buffer   //
-        inputBuffer[i] = toupper(inputBuffer[i]);                             // to uppercase characters          //
-      Serial.print(F("\nCommand \""));                                        //                                  //
-      Serial.write(inputBuffer);                                              //                                  //
-      Serial.print(F("\" received.\n"));                                      //                                  //
-      /*************************************************************************************************************
-      ** Parse the single-line command and perform the appropriate action. The current list of commands           **
-      ** understood are as follows:                                                                               **
-      **                                                                                                          **
-      ** SETDATE      - Set the device time                                                                       **
-      **                                                                                                          **
-      *************************************************************************************************************/
-      enum commands { SetDate, Unknown_Command };                             // of commands enumerated type      //
-      commands command;                                                       // declare enumerated type          //
-      char workBuffer[10];                                                    // Buffer to hold string compare    //
-      sscanf(inputBuffer,"%s %*",workBuffer);                                 // Parse the string for first word  //
-      if      (!strcmp(workBuffer,"SETDATE" )) command = SetDate;             // Set command number when found    //
-      else command = Unknown_Command;                                         // Otherwise set to not found       //
-      uint16_t tokens,year,month,day,hour,minute,second;                      // Variables to hold parsed dt/tm   //
-      switch (command) {                                                      // Action depending upon command    //
-        /***********************************************************************************************************
-        ** Set the device time and date                                                                           **
-        ***********************************************************************************************************/
-        case SetDate:                                                         // Set the RTC date/time            //
-          tokens = sscanf(inputBuffer,"%*s %d-%d-%d %d:%d:%d;",               // Use sscanf() to parse the date/  //
-                          &year,&month,&day,&hour,&minute,&second);           // time into variables              //
-          if (tokens!=6)                                                      // Check to see if it was parsed    //
-            Serial.print(F("Unable to parse date/time\n"));                   //                                  //
-          else {                                                              //                                  //
-            DS3231M.adjust(DateTime(year,month,day,hour,minute,second));      // Adjust the RTC date/time         //
-            Serial.print(F("Date has been set."));                            //                                  //
-          } // of if-then-else the date could be parsed                       //                                  //
-          break;                                                              //                                  //
-        /***********************************************************************************************************
-        ** Unknown command                                                                                        **
-        ***********************************************************************************************************/
-        case Unknown_Command:                                                 // Show options on bad command      //
-        default:                                                              //                                  //
-          Serial.println(F("Unknown command. Valid commands are:"));          //                                  //
-          Serial.println(F("SETDATE yyyy-mm-dd hh:mm:ss"));                   //                                  //
-      } // of switch statement to execute commands                            //                                  //
-      inputBytes = 0; // reset the counter                                    //                                  //
-    } // of if-then-else we've received full command                          //                                  //
-  } // of if-then there is something in our input buffer                      //                                  //
-} // of method readCommand                                                    //                                  //
 /*******************************************************************************************************************
 ** This is the main program for the Arduino IDE, it is an infinite loop and keeps on repeating.                   **
 *******************************************************************************************************************/
@@ -132,5 +81,10 @@ void loop() {                                                                 //
     Serial.println(inputBuffer);                                              // Display the current date/time    //
     secs = now.second();                                                      // Set the counter variable         //
   } // of if the seconds have changed                                         //                                  //
-  readCommand();                                                              // See if serial port had incoming  //
+  if (DS3231M.isAlarm()) {                                                    // If the alarm bit is set          //
+    Serial.println("Alarm has gone off.");                                    //                                  //
+    DS3231M.clearAlarm();                                                     // Reset the alarm state            //
+    DS3231M.setAlarm(secondsMinutesHoursDateMatch,now+TimeSpan(0,0,0,12));    // Alarm in 12 seconds. This will   //
+                                                                              // also reset the alarm state       //
+  } // of if-then an alarm has triggered                                      //                                  //
 } // of method loop()                                                         //----------------------------------//
