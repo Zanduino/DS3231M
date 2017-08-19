@@ -267,12 +267,12 @@ DateTime DS3231M_Class::now(){                                                //
 ** Method temperature() returns the internal temperature in tenths of degrees Celsius (this avoids having to use  **
 ** floating point                                                                                                 **
 *******************************************************************************************************************/
-int16_t DS3231M_Class::temperature() {                                        // See if the crystal is running    //
+int32_t DS3231M_Class::temperature() {                                        // See if the crystal is running    //
   int32_t temp = readByte(DS3231M_TEMPERATURE)<<8;                            // read MSB                         //
   temp |= readByte(DS3231M_TEMPERATURE+1);                                    // get LSB                          //
   temp = temp>>6;                                                             // Shift over 6 bits                //
   if(temp&0x200) temp|=0xFC00;                                                // keep negative by setting bits    //
-  temp = temp*10/4;                                                           // value is in .25C increments      //
+  temp = temp*100/4;                                                          // value is in .25C increments      //
   return temp;                                                                // Return computed temperature      //
 } // of method temperature()                                                  //                                  //
 /*******************************************************************************************************************

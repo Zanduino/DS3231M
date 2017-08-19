@@ -124,7 +124,7 @@
       void     adjust();                                                      // Set the date and time to compile //
       void     adjust(const DateTime& dt);                                    // Set the date and time            //
       DateTime now();                                                         // return time                      //
-      int16_t  temperature();                                                 // return clock temp in 10x °C      //
+      int32_t  temperature();                                                 // return clock temp in 100x °C     //
       void     setAlarm(const uint8_t alarmType,                              // Set an Alarm                     //
                         const DateTime dt, const bool state = true );         //                                  //
       bool     isAlarm();                                                     // Return if alarm is triggered     //

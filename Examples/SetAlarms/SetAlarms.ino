@@ -61,7 +61,7 @@ void setup() {                                                                //
           now.month(), now.day(), now.hour(), now.minute(), now.second());    // date/time with leading zeros     //
   Serial.println(inputBuffer);                                                // Display the current date/time    //
   Serial.print(F("DS3231M chip temperature is "));                            //                                  //
-  Serial.print(DS3231M.temperature()/10.0,1);                                 // Value is in 10ths of degrees     //
+  Serial.print(DS3231M.temperature()/100.0,1);                                // Value is in 100ths of a degree   //
   Serial.println("\xC2\xB0""C");                                              //                                  //
   Serial.println(F("Setting alarm to go off in 12 seconds."));                //                                  //
   DS3231M.setAlarm(secondsMinutesHoursDateMatch,now+TimeSpan(0,0,0,12));      // Alarm in 12 seconds              //
