@@ -5,14 +5,14 @@
 ################################
 # Classes/Datatypes (KEYWORD1) #
 ################################
-DS3231M			KEYWORD1
-DateTime		KEYWORD1
-TimeSpan		KEYWORD1
+DS3231M	KEYWORD1
+DateTime	KEYWORD1
+TimeSpan	KEYWORD1
 
 ####################################
 # Methods and Functions (KEYWORD2) #
 ####################################
-begin			KEYWORD2
+begin	KEYWORD2
 adjust    KEYWORD2
 now  KEYWORD2
 temperature  KEYWORD2
