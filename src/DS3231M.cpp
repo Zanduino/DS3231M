@@ -183,9 +183,9 @@ DS3231M_Class::~DS3231M_Class() {}                                            //
 *******************************************************************************************************************/
 bool DS3231M_Class::begin() {                                                 // Start I2C communications         //
   Wire.begin();                                                               // Start I2C as master device       //
-  Wire.beginTransmission(DS3231M_ADDRESS);                                    // Address the DS3231MM             //
+  Wire.beginTransmission(DS3231M_ADDRESS);                                    // Address the DS3231M              //
   uint8_t errorCode = Wire.endTransmission();                                 // See if there's a device present  //
-  if (errorCode == 0) {                                                       // If we have a DS3231MM            //
+  if (errorCode == 0) {                                                       // If we have a DS3231M             //
     writeByte(DS3231M_RTCHOUR,readByte(DS3231M_RTCHOUR)&B10111111);           // Force use of 24 hour clock       //
   } // of if-then device detected                                             //                                  //
   else return false;                                                          // return error if no device found  //
