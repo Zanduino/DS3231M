@@ -10,4 +10,6 @@ The DS3231M is available as a SO8 or SO16 package and runs on both 3V and 5V sys
 ## Description
 A detailed description of the library along with further details are available at the GitHub [DS3231M Wiki](https://github.com/SV-Zanshin/DS3231M/wiki). This includes wiring information and sample sketches that illustrate the library and it's functionality.
 
+[![DOI](https://www.zenodo.org/badge/100231477.svg)](https://www.zenodo.org/badge/latestdoi/100231477)
+
 ![Zanshin Logo](https://www.sv-zanshin.com/r/images/site/gif/zanshinkanjitiny.gif) <img src="https://www.sv-zanshin.com/r/images/site/gif/zanshintext.gif" width="75"/>
