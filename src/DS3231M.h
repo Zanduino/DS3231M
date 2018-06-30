@@ -23,6 +23,7 @@
 **                                                                                                                **
 ** Vers.  Date       Developer                         Comments                                                   **
 ** ====== ========== ================================= ========================================================== **
+** 1.0.2  2018-06-30 https://github.com/SV-Zanshin     Issue #3 - Allow 400KHz I2C bus speed to be set            **
 ** 1.0.0  2017-08-19 https://github.com/SV-Zanshin     Initial release                                            **
 ** 1.0.0b 2017-08-13 https://github.com/SV-Zanshin     Initial coding                                             **
 **                                                                                                                **
@@ -45,6 +46,8 @@
   /*****************************************************************************************************************
   ** Declare constants used in the class                                                                          **
   *****************************************************************************************************************/
+  const uint16_t I2C_STANDARD_MODE         =    100000;                       // Default normal I2C comms speed   //
+  const uint16_t I2C_FAST_MODE             =    400000;                       // Fast mode                        //
   const uint32_t SECONDS_PER_DAY           =     86400;                       // 60 secs * 60 mins * 24 hours     //
   const uint32_t SECONDS_FROM_1970_TO_2000 = 946684800;                       //                                  //
   const uint8_t  DS3231M_ADDRESS           =      0x68;                       // Fixed I2C Address for DS3231M    //
@@ -120,7 +123,7 @@
     public:                                                                   // Publicly visible methods         //
       DS3231M_Class();                                                        // Class constructor                //
       ~DS3231M_Class();                                                       // Class destructor                 //
-      bool     begin();                                                       // Start I2C Communications         //
+      bool     begin(const uint16_t i2cSpeed = I2C_STANDARD_MODE);            // Start I2C Communications         //
       void     adjust();                                                      // Set the date and time to compile //
       void     adjust(const DateTime& dt);                                    // Set the date and time            //
       DateTime now();                                                         // return time                      //

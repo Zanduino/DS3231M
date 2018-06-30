@@ -181,8 +181,9 @@ DS3231M_Class::~DS3231M_Class() {}                                            //
 ** Method begin starts I2C communications with the device, using a default address if one is not specified and    **
 ** return true if the device has been detected and false if it was not                                            **
 *******************************************************************************************************************/
-bool DS3231M_Class::begin() {                                                 // Start I2C communications         //
+bool DS3231M_Class::begin(const uint16_t i2cSpeed) {                          // Start I2C communications         //
   Wire.begin();                                                               // Start I2C as master device       //
+  Wire.setClock(i2cSpeed);                                                    // Set I2C clock speed              //
   Wire.beginTransmission(DS3231M_ADDRESS);                                    // Address the DS3231M              //
   uint8_t errorCode = Wire.endTransmission();                                 // See if there's a device present  //
   if (errorCode == 0) {                                                       // If we have a DS3231M             //
