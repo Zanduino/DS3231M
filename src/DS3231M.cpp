@@ -53,7 +53,7 @@ DateTime::DateTime (uint32_t t) {                                             //
   uint8_t leap;                                                               //                                  //
   for (yOff = 0; ; ++yOff) {                                                  //                                  //
     leap = yOff % 4 == 0;                                                     //                                  //
-    if (days < 365 + leap)                                                    //                                  //
+    if (days < (uint16_t)365 + leap)                                          //                                  //
     break;                                                                    //                                  //
     days -= 365 + leap;                                                       //                                  //
   } // of for-next each year                                                  //                                  //
@@ -181,7 +181,7 @@ DS3231M_Class::~DS3231M_Class() {}                                            //
 ** Method begin starts I2C communications with the device, using a default address if one is not specified and    **
 ** return true if the device has been detected and false if it was not                                            **
 *******************************************************************************************************************/
-bool DS3231M_Class::begin(const uint16_t i2cSpeed) {                          // Start I2C communications         //
+bool DS3231M_Class::begin(const uint32_t i2cSpeed) {                          // Start I2C communications         //
   Wire.begin();                                                               // Start I2C as master device       //
   Wire.setClock(i2cSpeed);                                                    // Set I2C clock speed              //
   Wire.beginTransmission(DS3231M_ADDRESS);                                    // Address the DS3231M              //
@@ -353,7 +353,7 @@ int8_t DS3231M_Class::getAgingOffset() {                                      //
 ** Method setAgingOffset() will set the aging offset as a signed integer. Each value is 0.12ppm and positive      **
 ** values slows the time base                                                                                     **
 *******************************************************************************************************************/
-void DS3231M_Class::setAgingOffset(const int8_t agingOffset) {                //                                  //
+int8_t DS3231M_Class::setAgingOffset(const int8_t agingOffset) {              //                                  //
   writeByte(DS3231M_AGING,agingOffset);                                       //                                  //
   return(readByte(DS3231M_AGING));                                            //                                  //
 } // of method setAgingOffset()                                               //                                  //
@@ -375,7 +375,7 @@ uint8_t DS3231M_Class::weekdayWrite(const uint8_t dow) {                      //
       writeByte(DS3231M_RTCWKDAY,dow);                                        // set the register                 //
       retval = dow;                                                           // set the return value             //
     } // of if-then we have a good DOW                                        //                                  //
-  return dow;                                                                 // return the value                 //
+  return retval;                                                              // return the value                 //
 } // of method weekdayWrite()                                                 //                                  //
 /*******************************************************************************************************************
 ** Method pinAlarm() will set the control register flag to make the INT/SQW Pin get pulled up on an alarm         **
