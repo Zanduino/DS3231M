@@ -94,7 +94,7 @@ void readCommand() {                                                          //
       sscanf(inputBuffer,"%s %*s",workBuffer);                                // Parse the string for first word  //
       if      (!strcmp(workBuffer,"SETDATE" )) command = SetDate;             // Set command number when found    //
       else command = Unknown_Command;                                         // Otherwise set to not found       //
-      uint tokens,year,month,day,hour,minute,second;                          // Variables to hold parsed dt/tm   //
+      unsigned int tokens,year,month,day,hour,minute,second;                  // Variables to hold parsed dt/tm   //
       switch (command) {                                                      // Action depending upon command    //
         /***********************************************************************************************************
         ** Set the device time and date                                                                           **
