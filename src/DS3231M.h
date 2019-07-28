@@ -50,6 +50,10 @@
 enum alarmTypes {everySecond,secondsMatch,secondsMinutesMatch,secondsMinutesHoursMatch,secondsMinutesHoursDateMatch,
                  secondsMinutesHoursDayMatch,everyMinute,minutesMatch,minutesHoursMatch,minutesHoursDateMatch,
                  minutesHoursDayMatch,UnknownAlarm};
+/***************************************************************************************************************//*!
+* @brief Declare the enumerated frequencies of pinSquareWave that can be set
+*******************************************************************************************************************/
+enum frequencies {_1hz,_1khz,_4khz,_8khz};
 
 /*****************************************************************************************************************
 ** Declare classes used in within the class                                                                     **
@@ -155,7 +159,7 @@ class TimeSpan; ///< TimeSpan class definition
       void     adjust();                                                      // Set the date and time to compile
       void     adjust(const DateTime& dt);                                    // Set the date and time
       DateTime now();                                                         // return time
-      int32_t  temperature();                                                 // return clock temp in 100x °C
+      int32_t  temperature();                                                 // return clock temp in 100x Â°C
       void     setAlarm(const uint8_t alarmType, const DateTime dt, const bool state = true ); // Set an Alarm
       bool     isAlarm();                                                     // Return if alarm is triggered
       void     clearAlarm();                                                  // Clear the alarm state flag
@@ -165,7 +169,7 @@ class TimeSpan; ///< TimeSpan class definition
       uint8_t  weekdayRead();                                                 // Read weekday from RTC
       uint8_t  weekdayWrite(const uint8_t dow);                               // Write weekday to RTC
       void     pinAlarm();                                                    // Make the INTSQW go up on alarm
-      void     pinSquareWave();                                               // Make the INTSQW be a 1Hz signal
+      void     pinSquareWave(const uint8_t frequency);                        // Make the INTSQW be a square signal at frequency
     private:
       uint8_t  readByte(const uint8_t addr);                                  // Read 1 byte from address on I2C
       void     writeByte(const uint8_t addr, const uint8_t data);             // Write 1 byte at address to I2C
