@@ -591,3 +591,26 @@ void DS3231M_Class::pinSquareWave()
 {
   writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)|0x4);
 } // of method pinSquareWave()
+/***************************************************************************************************************//*!
+* @brief     Sets the control register flag, RS1 and RS2 to make the INT/SQW Pin produce a square signal at frequency
+******************************************************************************************************************/
+void DS3231M_Class::pinSquareWave(const int8_t freq)
+{
+  _control = readByte(DS3231M_CONTROL|0x4);
+  _control = _control&0xE7;
+  switch (freq) {
+    case  _1hz:
+      break;
+    case  _1khz:
+      _control = _control|0x8;
+      break;
+    case  _4khz:
+      _control = _control|0x16;
+      break;
+    case  _8khz:
+      _control = _control|0x24;
+      break;
+  }
+  writeByte(DS3231M_CONTROL,_control);
+} // of method pinSquareWave()
+
