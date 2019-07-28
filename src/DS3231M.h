@@ -169,6 +169,7 @@ class TimeSpan; ///< TimeSpan class definition
       uint8_t  weekdayRead();                                                 // Read weekday from RTC
       uint8_t  weekdayWrite(const uint8_t dow);                               // Write weekday to RTC
       void     pinAlarm();                                                    // Make the INTSQW go up on alarm
+      void     pinSquareWave();                                               // Make the INTSQW be a 1Hz signal
       void     pinSquareWave(const uint8_t frequency);                        // Make the INTSQW be a square signal at frequency
     private:
       uint8_t  readByte(const uint8_t addr);                                  // Read 1 byte from address on I2C
