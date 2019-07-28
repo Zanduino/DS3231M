@@ -596,7 +596,7 @@ void DS3231M_Class::pinSquareWave()
 ******************************************************************************************************************/
 void DS3231M_Class::pinSquareWave(const int8_t freq)
 {
-  int8_t _control = readByte(DS3231M_CONTROL&0xE3);
+  int8_t _control = readByte(DS3231M_CONTROL)&0xE3;
   switch (freq) {
     case  _1hz:
       break;
