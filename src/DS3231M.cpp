@@ -581,7 +581,7 @@ uint8_t DS3231M_Class::weekdayWrite(const uint8_t dow)
 ******************************************************************************************************************/
 void DS3231M_Class::pinAlarm() 
 {
-  writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)&~0x4); // Set bit 3 to on
+  writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)|0x4); // Set bit 3 to on
 } // of method pinAlarm()
 
 /***************************************************************************************************************//*!
@@ -589,5 +589,5 @@ void DS3231M_Class::pinAlarm()
 ******************************************************************************************************************/
 void DS3231M_Class::pinSquareWave()
 {
-  writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)|0x4);
+  writeByte(DS3231M_CONTROL,readByte(DS3231M_CONTROL)&~0x4);
 } // of method pinSquareWave()

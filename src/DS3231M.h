@@ -31,6 +31,7 @@
 *
 * Version| Date       | Developer                     | Comments
 * ------ | ---------- | ----------------------------- | --------
+* 1.0.4  | 2019-08-18 | https://github.com/lagg070988 | Issue #9 - PinAlarm & PinSquareWave logic corrected
 * 1.0.4  | 2019-02-02 | https://github.com/SV-Zanshin | Issue #8 - converted documentation to doxygen
 * 1.0.3  | 2019-01-27 | https://github.com/SV-Zanshin | Issue #4 - incorrect datatype for I2C causes overflow
 * 1.0.2  | 2018-07-02 | https://github.com/SV-Zanshin | Added guard code against multiple I2C Speed definitions
