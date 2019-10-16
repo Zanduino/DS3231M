@@ -28,6 +28,7 @@ Written by Arnd\@SV-Zanshin
 
 Version | Date       | Developer                     | Comments
 ------- | ---------- | ----------------------------- | ---------------------------------------------------
+1.0.3   | 2019-10-16 | https://github.com/simmunity  | Corrected "inputBuffer" issue
 1.0.2   | 2019-02-02 | https://github.com/SV-Zanshin | Issue #7 - convert documentation to Doxygen
 1.0.1   | 2019-01-27 | https://github.com/SV-Zanshin | Issue #5. Changes to sscanf() for Esp32 Implementation
 1.0.0   | 2017-08-13 | https://github.com/SV-Zanshin | Initial coding
@@ -43,8 +44,7 @@ const uint8_t  LED_PIN             =     13; ///< Built-in Arduino green LED pin
 /*******************************************************************************************************************
 ** Declare global variables and instantiate classes                                                               **
 *******************************************************************************************************************/
-DS3231M_Class DS3231M; ///< Create an instance of the DS3231M class
-char          inputBuffer[SPRINTF_BUFFER_SIZE]; ///< Buffer for sprintf()/sscanf()
+DS3231M_Class DS3231M;                         ///< Create an instance of the DS3231M class
 
 /***************************************************************************************************************//*!
 * @brief    Arduino method called once at startup to initialize the system
@@ -90,24 +90,25 @@ void setup()
 *******************************************************************************************************************/
 void readCommand() 
 {
-  static uint8_t inputBytes = 0; // Variable for buffer position
-  while (Serial.available())     // Loop while there is incoming serial data
+  static char    text_buffer[SPRINTF_BUFFER_SIZE]; ///< Buffer for sprintf()/sscanf()
+  static uint8_t text_index = 0;                   ///< Variable for buffer position
+  while (Serial.available())                       // Loop while there is incoming serial data
   {
-    inputBuffer[inputBytes] = Serial.read();                                 // Get the next byte of data
+    text_buffer[text_index] = Serial.read();       // Get the next byte of data
     // keep on reading until a newline shows up or the buffer is full
-    if (inputBuffer[inputBytes] != '\n' && inputBytes < SPRINTF_BUFFER_SIZE) 
+    if (text_buffer[text_index] != '\n' && text_index < SPRINTF_BUFFER_SIZE) 
     {
-      inputBytes++;
+      text_index++;
     }
     else
     {
-      inputBuffer[inputBytes] = 0;                // Add the termination character
-      for (uint8_t i = 0; i < inputBytes; i++)   // Convert the whole input buffer to uppercase
+      text_buffer[text_index] = 0;              // Add the termination character
+      for (uint8_t i = 0; i < text_index; i++)  // Convert the whole input buffer to uppercase
       {
-        inputBuffer[i] = toupper(inputBuffer[i]);
+        text_buffer[i] = toupper(text_buffer[i]);
       } // for-next all characters in buffer
       Serial.print(F("\nCommand \""));
-      Serial.write(inputBuffer);
+      Serial.write(text_buffer);
       Serial.print(F("\" received.\n"));
       /*************************************************************************************************************
       ** Parse the single-line command and perform the appropriate action. The current list of commands           **
@@ -118,8 +119,8 @@ void readCommand()
       *************************************************************************************************************/
       enum commands { SetDate, Unknown_Command }; // enumerate all commands
       commands command;                           // declare enumerated type
-      char workBuffer[10];                        // Buffer to hold string compare
-      sscanf(inputBuffer,"%s %*s",workBuffer);    // Parse the string for first word
+      char workBuffer[SPRINTF_BUFFER_SIZE];       // Buffer to hold string compare
+      sscanf(text_buffer,"%s %*s",workBuffer);    // Parse the string for first word
       if (!strcmp(workBuffer, "SETDATE"))
       {
         command = SetDate; // Set command number when found
@@ -136,7 +137,7 @@ void readCommand()
         ***********************************************************************************************************/
         case SetDate:
           // Use sscanf() to parse the date/time into component variables
-          tokens = sscanf(inputBuffer,"%*s %u-%u-%u %u:%u:%u;",&year,&month,&day,&hour,&minute,&second);
+          tokens = sscanf(text_buffer,"%*s %u-%u-%u %u:%u:%u;",&year,&month,&day,&hour,&minute,&second);
           if (tokens != 6) // Check to see if it was parsed correctly
           {
             Serial.print(F("Unable to parse date/time\n"));
@@ -155,7 +156,7 @@ void readCommand()
           Serial.println(F("Unknown command. Valid commands are:"));
           Serial.println(F("SETDATE yyyy-mm-dd hh:mm:ss"));
       } // of switch statement to execute commands
-      inputBytes = 0; // reset the counter
+      text_index = 0; // reset the counter
     } // of if-then-else we've received full command
   } // of if-then there is something in our input buffer
 } // of method readCommand
@@ -172,9 +173,10 @@ void loop()
   if (secs != now.second())     // Output if seconds have changed
   {
     // Use sprintf() to pretty print the date/time with leading zeros 
-    sprintf(inputBuffer,"%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), 
+    char output_buffer[SPRINTF_BUFFER_SIZE]; ///< Temporary buffer for sprintf()
+    sprintf(output_buffer,"%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(),
             now.day(), now.hour(), now.minute(), now.second());
-    Serial.println(inputBuffer);
+    Serial.println(output_buffer);
     secs = now.second(); // Set the counter variable
   } // of if the seconds have changed
   readCommand(); // See if serial port has incoming data
