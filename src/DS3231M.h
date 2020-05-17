@@ -31,11 +31,13 @@
 *
 * Version| Date       | Developer                     | Comments
 * ------ | ---------- | ----------------------------- | --------
-* 1.0.4  | 2019-08-18 | https://github.com/lagg070988 | Issue #9 - PinAlarm & PinSquareWave logic corrected
-* 1.0.4  | 2019-02-02 | https://github.com/SV-Zanshin | Issue #8 - converted documentation to doxygen
-* 1.0.3  | 2019-01-27 | https://github.com/SV-Zanshin | Issue #4 - incorrect datatype for I2C causes overflow
+* 1.0.4  | 2020-05-17 | https://github.com/neocao123  | Issue #12 - overflow on hours was allowed
+* 1.0.4  | 2020-05-17 | https://github.com/SV-Zanshin | Cleaned up comments
+* 1.0.4  | 2019-08-18 | https://github.com/lagg070988 | Issue  #9 - PinAlarm & PinSquareWave logic corrected
+* 1.0.4  | 2019-02-02 | https://github.com/SV-Zanshin | Issue  #8 - converted documentation to doxygen
+* 1.0.3  | 2019-01-27 | https://github.com/SV-Zanshin | Issue  #4 - incorrect datatype for I2C causes overflow
 * 1.0.2  | 2018-07-02 | https://github.com/SV-Zanshin | Added guard code against multiple I2C Speed definitions
-* 1.0.2  | 2018-06-30 | https://github.com/SV-Zanshin | Issue #3 - Allow 400KHz I2C bus speed to be set
+* 1.0.2  | 2018-06-30 | https://github.com/SV-Zanshin | Issue  #3 - Allow 400KHz I2C bus speed to be set
 * 1.0.0  | 2017-08-19 | https://github.com/SV-Zanshin | Initial release
 * 1.0.0b | 2017-08-13 | https://github.com/SV-Zanshin | Initial coding
 */

@@ -46,14 +46,14 @@ const uint8_t  LED_PIN             =     13; ///< Built-in Arduino green LED pin
 *******************************************************************************************************************/
 DS3231M_Class DS3231M;                         ///< Create an instance of the DS3231M class
 
-/***************************************************************************************************************//*!
-* @brief    Arduino method called once at startup to initialize the system
-* @details  This is an Arduino IDE method which is called first upon boot or restart. It is only called one time
-*           and then control goes to the main "loop()" method, from which control never returns
-* @return   void
-*******************************************************************************************************************/
 void setup() 
 {
+  /*************************************************************************************************************//*!
+  * @brief    Arduino method called once at startup to initialize the system
+  * @details  This is an Arduino IDE method which is called first upon boot or restart. It is only called one time
+  *           and then control goes to the main "loop()" method, from which control never returns
+  * @return   void
+  *****************************************************************************************************************/
   pinMode(LED_PIN,OUTPUT);    // Make the LED light an output pin
   Serial.begin(SERIAL_SPEED);
   #ifdef  __AVR_ATmega32U4__  // If this is a 32U4 processor, then wait for the serial interface to initialize
@@ -78,18 +78,18 @@ void setup()
   Serial.print(F("DS3231M chip temperature is "));
   Serial.print(DS3231M.temperature()/100.0,1); // Value is in 100ths of a degree
   Serial.println("\xC2\xB0""C");
-  Serial.println(F("\nEnter on of the following serial commands:"));
+  Serial.println(F("\nEnter the following serial command:"));
   Serial.println(F("SETDATE yyyy-mm-dd hh:mm:ss"));
 } // of method setup()
 
-/***************************************************************************************************************//*!
-* @brief    Read incoming data from the Serial port
-* @details  This function checks the serial port to see if there has been any input. If there is data it is read 
-*           until a terminator is discovered and then the command is parsed and acted upon
-* @return   void
-*******************************************************************************************************************/
 void readCommand() 
 {
+  /*************************************************************************************************************//*!
+  * @brief    Read incoming data from the Serial port
+  * @details  This function checks the serial port to see if there has been any input. If there is data it is read 
+  *           until a terminator is discovered and then the command is parsed and acted upon
+  * @return   void
+  *****************************************************************************************************************/
   static char    text_buffer[SPRINTF_BUFFER_SIZE]; ///< Buffer for sprintf()/sscanf()
   static uint8_t text_index = 0;                   ///< Variable for buffer position
   while (Serial.available())                       // Loop while there is incoming serial data
@@ -161,13 +161,13 @@ void readCommand()
   } // of if-then there is something in our input buffer
 } // of method readCommand
 
-/***************************************************************************************************************//*!
-* @brief    Arduino method for the main program loop
-* @details  This is the main program for the Arduino IDE, it is an infinite loop and keeps on repeating.
-* @return   void
-*******************************************************************************************************************/
 void loop()
 {
+  /*************************************************************************************************************//*!
+  * @brief    Arduino method for the main program loop
+  * @details  This is the main program for the Arduino IDE, it is an infinite loop and keeps on repeating.
+  * @return   void
+  *****************************************************************************************************************/
   static uint8_t secs;
   DateTime now = DS3231M.now(); // get the current time from device
   if (secs != now.second())     // Output if seconds have changed
