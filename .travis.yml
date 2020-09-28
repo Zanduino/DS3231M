@@ -22,6 +22,16 @@ branches:
 git:
   depth: false
   quiet: true
+  addons:
+  apt:
+    sources:
+      - llvm-toolchain-trusty-5.0
+      - key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
+    packages:
+      - python3-pip
+      - python3-wheel
+      - clang-format-5.0
+
 env:
   global:
     - PRETTYNAME="SV-Zanshin Maxim Integrated DS3231M I2C Thermometer Arduino Library"
