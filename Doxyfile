@@ -3,12 +3,13 @@
 ##                                                                                                  ##
 ## Date       Developer           Comments                                                          ##
 ## ========== =================== ================================================================= ##
+## 2020-06-04 Arnd@SV-Zanshin     Updated version to v1.0.5                                         ##
 ## 2020-05-11 Arnd@SV-Zanshin     Removed all comments in order to compact this file                ##
 ##                                                                                                  ##
 ######################################################################################################
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = DS3231M
-PROJECT_NUMBER         = "Version 1.0.3"
+PROJECT_NUMBER         = "Version 1.0.5"
 PROJECT_BRIEF          = "Arduino Library for DS3231M Real-Time clock"
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       =
