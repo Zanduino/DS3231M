@@ -108,12 +108,13 @@ const uint8_t  DS3231M_STATUS            = 0x0F;       ///< DS3231 STATUS      R
 const uint8_t  DS3231M_AGING             = 0x10;       ///< DS3231 AGING       Register Address
 const uint8_t  DS3231M_TEMPERATURE       = 0x11;       ///< DS3231 TEMPERATURE Register Address
 
+/*!
+ @brief    Simple general-purpose date/time class
+ @details  Class has no TZ / DST / leap second handling. Copied from RTClib. For further
+           information on this implementation see
+ https://github.com/SV-Zanshin/DS3231M/wiki/DateTimeClass
+*/
 class DateTime {
-  /*!
-   @brief    Simple general-purpose date/time class
-   @details  Class has no TZ / DST / leap second handling. Copied from RTClib. For further
-   information on this implementation see https://github.com/SV-Zanshin/DS3231M/wiki/DateTimeClass
-  */
  public:
   DateTime(uint32_t t = 0);
   DateTime(uint16_t year, uint8_t month, uint8_t day, uint8_t hour = 0, uint8_t min = 0,
@@ -142,13 +143,13 @@ class DateTime {
       ss;        ///< Seconds
 };               // of class DateTime definition
 
+/*
+ @brief    Simple general-purpose TimeSpan
+ @details  Timespan class which can represent changes in time with seconds accuracy. Copied from
+           RTClib. For further infos see **
+ https://github.com/SV-Zanshin/DS3231M/wiki/TimeSpanClass
+*/
 class TimeSpan {
-  /*
-   @brief    Simple general-purpose TimeSpan
-   @details  Timespan class which can represent changes in time with seconds accuracy. Copied from
-             RTClib. For further infos see **
-   https://github.com/SV-Zanshin/DS3231M/wiki/TimeSpanClass
-  */
  public:
   TimeSpan(int32_t seconds = 0);
   TimeSpan(int16_t days, int8_t hours, int8_t minutes, int8_t seconds);
