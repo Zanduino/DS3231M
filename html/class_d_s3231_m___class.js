@@ -8,6 +8,7 @@ var class_d_s3231_m___class =
     [ "clearAlarm", "class_d_s3231_m___class.html#ab0186951b25f4984e4300b3b778acc71", null ],
     [ "getAgingOffset", "class_d_s3231_m___class.html#a90a5625a15c222816e23e6d111c28ed8", null ],
     [ "isAlarm", "class_d_s3231_m___class.html#a28d9ccd36920c521bc24e2460e7d3504", null ],
+    [ "isStopped", "class_d_s3231_m___class.html#a0b89bb5f9a8efdc6d6b4b37db4ab9e6f", null ],
     [ "kHz32", "class_d_s3231_m___class.html#a9bf9d6b318db87ca5aedeee30a59b0b8", null ],
     [ "now", "class_d_s3231_m___class.html#abd313af35bd1cde7c52483c2f58b9bce", null ],
     [ "pinAlarm", "class_d_s3231_m___class.html#a5c2e5a47bb6d3ccede87e2b4bcfef5bc", null ],
