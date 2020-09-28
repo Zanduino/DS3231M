@@ -16,6 +16,7 @@ begin	KEYWORD2
 adjust	KEYWORD2
 now	KEYWORD2
 temperature	KEYWORD2
+isStopped	KEYWORD2
 setAlarm	KEYWORD2
 isAlarm	KEYWORD2
 clearAlarm	KEYWORD2
