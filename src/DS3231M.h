@@ -143,7 +143,7 @@ class DateTime {
       ss;        ///< Seconds
 };               // of class DateTime definition
 
-/*
+/*!
  @brief    Simple general-purpose TimeSpan
  @details  Timespan class which can represent changes in time with seconds accuracy. Copied from
            RTClib. For further infos see **
