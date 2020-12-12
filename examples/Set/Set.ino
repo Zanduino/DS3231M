@@ -4,8 +4,8 @@
 
 Example program for using the DS3231M library which allows access to the DS3231M real-time-clock
 chip. The library as well as the most current version of this program is available at GitHub using
-the address https://github.com/SV-Zanshin/DS3231M and a more detailed description of this program
-(and the library) can be found at https://github.com/SV-Zanshin/DS3231M/wiki/Demo.ino \n\n
+the address https://github.com/Zanduino/DS3231M and a more detailed description of this program
+(and the library) can be found at https://github.com/Zanduino/DS3231M/wiki/Demo.ino \n\n
 
 The DS3231M library uses the standard SPI Wire library for communications with the RTC chip and has
 also used the class definitions of the standard RTClib library from Adafruit/Jeelabs. The data sheet
@@ -23,16 +23,16 @@ received a copy of the GNU General Public License along with this program.  If n
 
 @section Setauthor Author
 
-Written by Arnd\@SV-Zanshin
+ Written by Arnd <Zanshin_Github@sv-zanshin.com> / https://www.github.com/SV-Zanshin
 
 @section Setversions Changelog
 
-Version | Date       | Developer                     | Comments
-------- | ---------- | ----------------------------- | ---------------------------------------------
-1.0.3   | 2019-10-16 | https://github.com/simmunity  | Corrected "inputBuffer" issue
-1.0.2   | 2019-02-02 | https://github.com/SV-Zanshin | Issue #7 - convert documentation to Doxygen
-1.0.1   | 2019-01-27 | https://github.com/SV-Zanshin | Issue #5. Changes to sscanf() for Esp32
-1.0.0   | 2017-08-13 | https://github.com/SV-Zanshin | Initial coding
+Version | Date       | Developer  | Comments
+------- | ---------- | ---------- | ---------------------------------------------
+1.0.3   | 2019-10-16 | simmunity  | Corrected "inputBuffer" issue
+1.0.2   | 2019-02-02 | SV-Zanshin | Issue #7 - convert documentation to Doxygen
+1.0.1   | 2019-01-27 | SV-Zanshin | Issue #5. Changes to sscanf() for Esp32
+1.0.0   | 2017-08-13 | SV-Zanshin | Initial coding
 */
 #include <DS3231M.h>  // Include the DS3231M RTC library
 /***************************************************************************************************

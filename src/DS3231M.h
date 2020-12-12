@@ -8,15 +8,23 @@
  https://www.maximintegrated.com/en/products/digital/real-time-clocks/DS3231M.html. The DS3231M's
  data sheet is located at https://datasheets.maximintegrated.com/en/ds/DS3231M.pdf \n\n
 
- The most recent version of this library can be found at https://github.com/SV-Zanshin/DS3231M and a
- detailed library description is on the library's wiki at https://github.com/SV-Zanshin/DS3231M/wiki
+ The most recent version of this library can be found at https://github.com/Zanduino/DS3231M and a
+ detailed library description is on the library's wiki at https://github.com/Zanduino/DS3231M/wiki
  \n\n
 
  Use is made of portions of Adafruit's RTClib Version 1.2.0 at https://github.com/adafruit/RTClib
  which is a fork of the original RTClib from Jeelabs. The code encompasses simple classes for time
  and date.
 
- @section license __**GNU General Public License v3.0**__
+ @section clang-format
+ Part of the GitHub actions for CI is running every source file through "clang-format" to ensure
+ that coding formatting is done the same for all files. The configuration file ".clang-format" is
+ located at https://github.com/Zanduino/Common/tree/main/clang-format and this is used for CI tests
+ when pushing to GitHub. The local file, if present in the root directory, is ignored when
+ committing and uploading.
+
+ @section license GNU General Public License v3.0
+
  This program is free software: you can redistribute it and/or modify it under the terms of the GNU
  General Public License as published by the Free Software Foundation, either version 3 of the
  License, or (at your option) any later version. This program is distributed in the hope that it
@@ -27,7 +35,7 @@
 
  @section author Author
 
- Written by Arnd\@SV-Zanshin
+ Written by Arnd <Zanshin_Github@sv-zanshin.com> / https://www.github.com/SV-Zanshin
 
  @section versions Changelog
 
@@ -112,7 +120,7 @@ const uint8_t  DS3231M_TEMPERATURE       = 0x11;       ///< DS3231 TEMPERATURE R
  @brief    Simple general-purpose date/time class
  @details  Class has no TZ / DST / leap second handling. Copied from RTClib. For further
            information on this implementation see
- https://github.com/SV-Zanshin/DS3231M/wiki/DateTimeClass
+ https://github.com/Zanduino/DS3231M/wiki/DateTimeClass
 */
 class DateTime {
  public:
@@ -147,7 +155,7 @@ class DateTime {
  @brief    Simple general-purpose TimeSpan
  @details  Timespan class which can represent changes in time with seconds accuracy. Copied from
            RTClib. For further infos see **
- https://github.com/SV-Zanshin/DS3231M/wiki/TimeSpanClass
+ https://github.com/Zanduino/DS3231M/wiki/TimeSpanClass
 */
 class TimeSpan {
  public:
@@ -177,7 +185,7 @@ class DS3231M_Class {
   void     adjust();                                            // Set the date and time to compile
   void     adjust(const DateTime& dt);                          // Set the date and time
   DateTime now();                                               // return time
-  int32_t  temperature();                                       // return clock temp in 100x °C
+  int32_t  temperature();                                       // return clock temp in 100x ï¿½C
   bool     isStopped();                                         // Return true if Oscillator stopped
   void     setAlarm(const uint8_t alarmType, const DateTime dt,
                     const bool state = true);         // Set an Alarm

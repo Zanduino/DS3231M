@@ -4,8 +4,8 @@
 
 Example program for using the DS3231M library which allows access to the DS3231M real-time-clock chip. The library
 as well as the most current version of this program is available at GitHub using the address
-https://github.com/SV-Zanshin/DS3231M and a more detailed description of this program (and the library) can be
-found at https://github.com/SV-Zanshin/DS3231M/wiki/Demo.ino \n\n
+https://github.com/Zanduino/DS3231M and a more detailed description of this program (and the library) can be
+found at https://github.com/Zanduino/DS3231M/wiki/Demo.ino \n\n
 
 The DS3231M library uses the standard SPI Wire library for communications with the RTC chip and has also used the
 class definitions of the standard RTClib library from Adafruit/Jeelabs. The data sheet for the DS3231M is located
@@ -22,14 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 @section SetAlarmsauthor Author
 
-Written by Arnd\@SV-Zanshin
+ Written by Arnd <Zanshin_Github@sv-zanshin.com> / https://www.github.com/SV-Zanshin
 
 @section SetAlarmsversions Changelog
 
-Version | Date       | Developer                     | Comments
-------- | ---------- | ----------------------------- | ---------------------------------------------------
-1.0.1   | 2019-02-02 | https://github.com/SV-Zanshin | Issue #7 - convert documentation to Doxygen
-1.0.0   | 2017-08-19 | https://github.com/SV-Zanshin | Initial coding
+Version | Date       | Developer  | Comments
+------- | ---------- | ---------- | ---------------------------------------------------
+1.0.1   | 2019-02-02 | SV-Zanshin | Issue #7 - convert documentation to Doxygen
+1.0.0   | 2017-08-19 | SV-Zanshin | Initial coding
 */
 #include <DS3231M.h> // Include the DS3231M RTC library
 /*******************************************************************************************************************
@@ -76,7 +76,7 @@ void setup()
   Serial.print(F("Date/Time set to compile time: "));
   DateTime now = DS3231M.now(); // get the current time
   // Use sprintf() to pretty print the date/time with leading zeros
-  sprintf(inputBuffer,"%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(), 
+  sprintf(inputBuffer,"%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(),
           now.minute(), now.second());
   Serial.println(inputBuffer);
   Serial.print(F("DS3231M chip temperature is "));
@@ -93,13 +93,13 @@ void setup()
 * @details  This is the main program for the Arduino IDE, it is an infinite loop and keeps on repeating.
 * @return   void
 *******************************************************************************************************************/
-void loop() 
+void loop()
 {
   static uint8_t secs;
   DateTime now = DS3231M.now(); // get the current time
   if (secs != now.second())     // Output if seconds have changed
   {
-    sprintf(inputBuffer,"%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(), 
+    sprintf(inputBuffer,"%04d-%02d-%02d %02d:%02d:%02d", now.year(), now.month(), now.day(),
             now.hour(), now.minute(), now.second());
     Serial.println(inputBuffer); // Display the current date/time
     secs = now.second();         // Set the counter variable
@@ -108,7 +108,7 @@ void loop()
   {
     Serial.println("Alarm has gone off.");
     DS3231M.clearAlarm();
-    // Alarm in 12 seconds. This will also reset the alarm state 
-    DS3231M.setAlarm(secondsMinutesHoursDateMatch,now+TimeSpan(0,0,0,12)); 
+    // Alarm in 12 seconds. This will also reset the alarm state
+    DS3231M.setAlarm(secondsMinutesHoursDateMatch,now+TimeSpan(0,0,0,12));
   } // of if-then an alarm has triggered
 } // of method loop()
