@@ -38,9 +38,9 @@ Version | Date       | Developer  | Comments
 /***************************************************************************************************
 ** Declare all program constants                                                                  **
 ***************************************************************************************************/
-const uint32_t SERIAL_SPEED        = 115200;  ///< Set the baud rate for Serial I/O
-const uint8_t  SPRINTF_BUFFER_SIZE = 32;      ///< Buffer size for sprintf()
-const uint8_t  LED_PIN             = 13;      ///< Built-in Arduino green LED pin
+const uint32_t SERIAL_SPEED{115200};     ///< Set the baud rate for Serial I/O
+const uint8_t  SPRINTF_BUFFER_SIZE{32};  ///< Buffer size for sprintf()
+const uint8_t  LED_PIN{13};              ///< Built-in Arduino green LED pin
 
 /***************************************************************************************************
 ** Declare global variables and instantiate classes                                               **
@@ -57,8 +57,8 @@ void setup() {
   */
   pinMode(LED_PIN, OUTPUT);  // Make the LED light an output pin
   Serial.begin(SERIAL_SPEED);
-#ifdef __AVR_ATmega32U4__  // If this is a 32U4 processor, then wait for the serial
-  delay(3000);  // interface to initialize
+#ifdef __AVR_ATmega32U4__  // If this is a 32U4 processor, then wait for serial to initialize
+  delay(3000);
 #endif
   Serial.print(F("\nStarting Set program\n"));
   Serial.print(F("- Compiled with c++ version "));
