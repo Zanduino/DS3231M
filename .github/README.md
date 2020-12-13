@@ -12,4 +12,4 @@ The DS3231M is available as a SO8 or SO16 package and runs on both 3V and 5V sys
 ## Description
 A detailed description of the library along with further details are available at the GitHub [DS3231M Wiki](https://github.com/Zanduino/DS3231M/wiki). This includes wiring information and sample sketches that illustrate the library and it's functionality.
 
-[![Zanshin Logo](https://zanduino.github.io/Images/zanshinkanjitiny.gif) <img src="https://zanduino.github.io/Images/zanshintext.gif" width="75"/>](https://www.sv-zanshin.com)
+[![Zanshin Logo](https://zanduino.github.io/Images/zanshinkanjitiny.gif) <img src="https://zanduino.github.io/Images/zanshintext.gif" width="75"/>](https://zanduino.github.io)
