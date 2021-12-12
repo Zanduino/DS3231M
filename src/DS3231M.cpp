@@ -525,7 +525,7 @@ void DS3231M_Class::pinSquareWave() {
               the RS1 and RS2 bits to "0" so that the default is 1Hz for the DS3231. These
               bits are ignored by the DS3231M
   */
-  writeByte(DS3231M_CONTROL, readByte(DS3231M_CONTROL) & ~B00111000);
+  writeByte(DS3231M_CONTROL, readByte(DS3231M_CONTROL) & ~B0011100);
 }  // of method pinSquareWave()
 void DS3231M_Class::pinSquareWave(const uint8_t rate) {
   /*!
@@ -537,5 +537,5 @@ void DS3231M_Class::pinSquareWave(const uint8_t rate) {
               and B11 = 8.192kHz
    @param[in] rate Code for Hz rate
 */
-  writeByte(DS3231M_CONTROL, (readByte(DS3231M_CONTROL) & ~B00111000) | (rate | B00000011) << 3);
+  writeByte(DS3231M_CONTROL, (readByte(DS3231M_CONTROL) & ~B0011100) | (rate | B00000011) << 3);
 }  // of method pinSquareWave()
