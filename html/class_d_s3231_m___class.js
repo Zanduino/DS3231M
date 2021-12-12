@@ -13,6 +13,7 @@ var class_d_s3231_m___class =
     [ "now", "class_d_s3231_m___class.html#abd313af35bd1cde7c52483c2f58b9bce", null ],
     [ "pinAlarm", "class_d_s3231_m___class.html#a5c2e5a47bb6d3ccede87e2b4bcfef5bc", null ],
     [ "pinSquareWave", "class_d_s3231_m___class.html#a563c01d87dbd8b2ccf5a0c22011429fd", null ],
+    [ "pinSquareWave", "class_d_s3231_m___class.html#a8e8288b69364da2006110c0a54396339", null ],
     [ "setAgingOffset", "class_d_s3231_m___class.html#a1b23af832bf32c4c7c9010c833309808", null ],
     [ "setAlarm", "class_d_s3231_m___class.html#ad736cb71801ab24a230f573aaf052c07", null ],
     [ "temperature", "class_d_s3231_m___class.html#ae91ff2d98df3c99367bbd55d32f1ee5f", null ],

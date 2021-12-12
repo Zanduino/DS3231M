@@ -136,6 +136,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a5c2e5a47bb6d3ccede87e2b4bcfef5bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a563c01d87dbd8b2ccf5a0c22011429fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_d_s3231_m___class.html#a563c01d87dbd8b2ccf5a0c22011429fd">pinSquareWave</a> ()</td></tr>
 <tr class="separator:a563c01d87dbd8b2ccf5a0c22011429fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e8288b69364da2006110c0a54396339"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_d_s3231_m___class.html#a8e8288b69364da2006110c0a54396339">pinSquareWave</a> (const uint8_t rate)</td></tr>
+<tr class="separator:a8e8288b69364da2006110c0a54396339"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main DS3231M class definition for the Real-Time clock. </p>
@@ -342,7 +344,7 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <a id="a563c01d87dbd8b2ccf5a0c22011429fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a563c01d87dbd8b2ccf5a0c22011429fd">&#9670;&nbsp;</a></span>pinSquareWave()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a563c01d87dbd8b2ccf5a0c22011429fd">&#9670;&nbsp;</a></span>pinSquareWave() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -356,6 +358,32 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Sets the control register flag to make the INT/SQW Pin produce a 1Hz signal</p>
+<p>The DS3231 allows the frequency to be set, so ensure compatibility by setting the RS1 and RS2 bits to "0" so that the default is 1Hz for the DS3231. These bits are ignored by the DS3231M</p>
+
+</div>
+</div>
+<a id="a8e8288b69364da2006110c0a54396339"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e8288b69364da2006110c0a54396339">&#9670;&nbsp;</a></span>pinSquareWave() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DS3231M_Class::pinSquareWave </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t&#160;</td>
+          <td class="paramname"><em>rate</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets the control register flag to make the INT/SQW Pin produce a square signal</p>
+<p>This call produces a 1Hz signal on the DS3231M, but on the DS3231 the rate parameter is used to set bits RS1 and RS2 to the appropriate frequency. allows the frequency to be set, so ensure compatibility by setting the RS1 and RS2 bits to "0" so that the default is 1Hz for the DS3231. B00 = 1Hz, B01 = 1.024kHz, B10 = 4.096kHz, and B11 = 8.192kHz </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">rate</td><td>Code for Hz rate</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
