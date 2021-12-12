@@ -70,19 +70,13 @@ DateTime::DateTime(uint32_t t) {
   uint8_t  leap;
   for (yOff = 0;; ++yOff) {
     leap = yOff % 4 == 0;
-    if (days < (uint16_t)365 + leap) {
-      break;
-    }  // if-then not a leap
+    if (days < (uint16_t)365 + leap) { break; }  // if-then not a leap
     days -= 365 + leap;
   }  // of for-next each year
   for (m = 1;; ++m) {
     uint8_t daysPerMonth = pgm_read_byte(daysInMonth + m - 1);
-    if (leap && m == 2) {
-      ++daysPerMonth;
-    }  // if-then
-    if (days < daysPerMonth) {
-      break;
-    }  // if-then not a leap
+    if (leap && m == 2) { ++daysPerMonth; }  // if-then
+    if (days < daysPerMonth) { break; }      // if-then not a leap
     days -= daysPerMonth;
   }  // of for-next each month
   d = days + 1;
@@ -103,9 +97,7 @@ DateTime::DateTime(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint
    @param[in] sec Second
 
   */
-  if (year >= 2000) {
-    year -= 2000;
-  }  // if-then year past 2000
+  if (year >= 2000) { year -= 2000; }  // if-then year past 2000
   yOff = year;
   m    = month;
   d    = day;
