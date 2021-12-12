@@ -58,8 +58,8 @@
 
 #include "Arduino.h"  // Arduino data type definitions
 #ifndef DS3231M_h
-/*! @brief Guard code definition to prevent multiple definitions */
-#define DS3231M_h
+  /*! @brief Guard code definition to prevent multiple definitions */
+  #define DS3231M_h
 
 /**************************************************************************************************
 ** Declare enumerated types                                                                      **
@@ -85,15 +85,15 @@ enum alarmTypes {
 **************************************************************************************************/
 class TimeSpan;  ///< TimeSpan class definition
 
-/**************************************************************************************************
-** Declare constants used in the class                                                           **
-**************************************************************************************************/
-#ifndef I2C_MODES
-/*! @brief Guard code definition to prevent multiple definitions */
-#define I2C_MODES
+  /**************************************************************************************************
+  ** Declare constants used in the class **
+  **************************************************************************************************/
+  #ifndef I2C_MODES
+    /*! @brief Guard code definition to prevent multiple definitions */
+    #define I2C_MODES
 const uint32_t I2C_STANDARD_MODE = 100000;  ///< Default normal I2C 100KHz speed
 const uint32_t I2C_FAST_MODE     = 400000;  ///< Fast mode with 400KHz
-#endif
+  #endif
 const uint32_t SECONDS_PER_DAY           = 86400;      ///< 60 secs * 60 mins * 24 hours
 const uint32_t SECONDS_FROM_1970_TO_2000 = 946684800;  ///< Seconds between 1970/1/1 to 2000/1/1
 const uint8_t  DS3231M_ADDRESS           = 0x68;       ///< Fixed I2C Address for DS3231M
