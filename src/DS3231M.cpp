@@ -521,6 +521,21 @@ void DS3231M_Class::pinAlarm() {
 void DS3231M_Class::pinSquareWave() {
   /*!
    @brief     Sets the control register flag to make the INT/SQW Pin produce a 1Hz signal
+   @detail    The DS3231 allows the frequency to be set, so ensure compatibility by setting
+              the RS1 and RS2 bits to "0" so that the default is 1Hz for the DS3231. These
+              bits are ignored by the DS3231M
   */
-  writeByte(DS3231M_CONTROL, readByte(DS3231M_CONTROL) & ~0x4);
+  writeByte(DS3231M_CONTROL, readByte(DS3231M_CONTROL) & ~B00111000); 
+}  // of method pinSquareWave()
+void DS3231M_Class::pinSquareWave(const uint8_t rate) {
+  /*!
+   @brief     Sets the control register flag to make the INT/SQW Pin produce a square signal
+   @detail    This call produces a 1Hz signal on the DS3231M, but on the DS3231 the rate parameter
+              is used to set bits RS1 and RS2 to the appropriate frequency. allows the frequency to
+              be set, so ensure compatibility by setting the RS1 and RS2 bits to "0" so that the 
+              default is 1Hz for the DS3231. B00 = 1Hz, B01 = 1.024kHz, B10 = 4.096kHz,
+              and B11 = 8.192kHz
+   @param[in] rate Code for Hz rate
+*/
+  writeByte(DS3231M_CONTROL, (readByte(DS3231M_CONTROL) & ~B00111000) | (rate | B00000011)<< 3);
 }  // of method pinSquareWave()

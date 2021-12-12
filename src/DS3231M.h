@@ -41,6 +41,7 @@
 
  Version| Date       | Developer  | Comments
  ------ | ---------- | ---------- | --------
+ 1.0.7  | 2021-12-12 | lagg070988 | Issue #18 - add variable square wave for DS3231
  1.0.5  | 2020-09-28 | gvisca44   | Issue #13 - add function "isStopped()"
  1.0.5  | 2020-09-28 | SV-Zanshin | Issue #14 - Reformat using clang-format
  1.0.4  | 2020-05-17 | neocao123  | Issue #12 - overflow on hours was allowed
@@ -198,6 +199,7 @@ class DS3231M_Class {
   uint8_t  weekdayWrite(const uint8_t dow);           // Write weekday to RTC
   void     pinAlarm();                                // Make INTSQW go up on alarm
   void     pinSquareWave();                           // Make INTSQW be a 1Hz signal
+  void     pinSquareWave(const uint8_t rate);         // Make INTSQW be a specific Hz signal on 3231
  private:
   uint8_t  readByte(const uint8_t addr);                       // Read 1 byte from I2C address
   void     writeByte(const uint8_t addr, const uint8_t data);  // Write 1 byte at I2Caddress
