@@ -537,5 +537,5 @@ void DS3231M_Class::pinSquareWave(const uint8_t rate) {
               and B11 = 8.192kHz
    @param[in] rate Code for Hz rate
 */
-  writeByte(DS3231M_CONTROL, (readByte(DS3231M_CONTROL) & ~B0011100) | (rate | B00000011) << 3);
+  writeByte(DS3231M_CONTROL, (readByte(DS3231M_CONTROL) & ~B0011100) | (rate & B00000011) << 3);
 }  // of method pinSquareWave()
