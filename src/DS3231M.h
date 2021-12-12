@@ -199,7 +199,7 @@ class DS3231M_Class {
   uint8_t  weekdayWrite(const uint8_t dow);           // Write weekday to RTC
   void     pinAlarm();                                // Make INTSQW go up on alarm
   void     pinSquareWave();                           // Make INTSQW be a 1Hz signal
-  void     pinSquareWave(const uint8_t rate);         // Make INTSQW be a specific Hz signal on 3231
+  void     pinSquareWave(const uint8_t rate);         // Make INTSQW be a specific Hz on DS3231
  private:
   uint8_t  readByte(const uint8_t addr);                       // Read 1 byte from I2C address
   void     writeByte(const uint8_t addr, const uint8_t data);  // Write 1 byte at I2Caddress
