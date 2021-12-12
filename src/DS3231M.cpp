@@ -129,31 +129,15 @@ DateTime::DateTime(const char* date, const char* time) {
   */
   yOff = conv2d(date + 9);  // Compute the year offset
   switch (date[0]) {
-    case 'J':
-      m = (date[1] == 'a') ? 1 : ((date[2] == 'n') ? 6 : 7);
-      break;  // Jan Jun Jul
-    case 'F':
-      m = 2;
-      break;  // Feb
-    case 'A':
-      m = date[2] == 'r' ? 4 : 8;
-      break;  // Apr Aug
-    case 'M':
-      m = date[2] == 'r' ? 3 : 5;
-      break;  // May
-    case 'S':
-      m = 9;
-      break;  // Sep
-    case 'O':
-      m = 10;
-      break;  // Oct
-    case 'N':
-      m = 11;
-      break;  // Nov
-    case 'D':
-      m = 12;
-      break;  // Dec
-  }           // of switch for the month
+    case 'J': m = (date[1] == 'a') ? 1 : ((date[2] == 'n') ? 6 : 7); break;  // Jan Jun Jul
+    case 'F': m = 2; break;                                                  // Feb
+    case 'A': m = date[2] == 'r' ? 4 : 8; break;                             // Apr Aug
+    case 'M': m = date[2] == 'r' ? 3 : 5; break;                             // May
+    case 'S': m = 9; break;                                                  // Sep
+    case 'O': m = 10; break;                                                 // Oct
+    case 'N': m = 11; break;                                                 // Nov
+    case 'D': m = 12; break;                                                 // Dec
+  }  // of switch for the month
   d  = conv2d(date + 4);
   hh = conv2d(time);
   mm = conv2d(time + 3);
