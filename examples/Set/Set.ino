@@ -29,6 +29,7 @@ received a copy of the GNU General Public License along with this program.  If n
 
 Version | Date       | Developer  | Comments
 ------- | ---------- | ---------- | ---------------------------------------------
+1.0.4   | 2021-12-27 | simmunity  | Corrected typographical errors in comments
 1.0.3   | 2019-10-16 | simmunity  | Corrected "inputBuffer" issue
 1.0.2   | 2019-02-02 | SV-Zanshin | Issue #7 - convert documentation to Doxygen
 1.0.1   | 2019-01-27 | SV-Zanshin | Issue #5. Changes to sscanf() for Esp32
@@ -55,7 +56,7 @@ void setup() {
              never returns
    @return   void
   */
-  pinMode(LED_PIN, OUTPUT);  // Make the LED light an output pin
+  pinMode(LED_PIN, OUTPUT);  // Make the built-in LED light an output pin
   Serial.begin(SERIAL_SPEED);
 #ifdef __AVR_ATmega32U4__  // If this is a 32U4 processor, then wait for serial to initialize
   delay(3000);
@@ -70,14 +71,14 @@ void setup() {
   Serial.print(F("\n"));
   while (!DS3231M.begin())  // Initialize RTC communications
   {
-    Serial.println(F("Unable to find DS3231MM. Checking again in 3s."));
+    Serial.println(F("Unable to find DS3231M. Checking again in 3s."));
     delay(3000);
   }                         // of loop until device is located
   DS3231M.pinSquareWave();  // Make INT/SQW pin toggle at 1Hz
   Serial.println(F("DS3231M initialized."));
   DS3231M.adjust();  // Set to library compile Date/Time
   Serial.print(F("DS3231M chip temperature is "));
-  Serial.print(DS3231M.temperature() / 100.0, 1);  // Value is in 100ths of a degree
+  Serial.print(DS3231M.temperature() / 100.0, 1);  // Value is in 100ths of a degree Celsius
   Serial.println(
       "\xC2\xB0"
       "C");
