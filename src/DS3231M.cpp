@@ -155,10 +155,11 @@ DateTime::DateTime(const __FlashStringHelper* date, const __FlashStringHelper* t
   @param[in] time Character buffer with time value in HH:MM:SS format
   */
   char ybuff[11], tbuff[9];
-  memcpy_P(ybuff, date, 11);                // copy flash string to memory
-  memcpy_P(tbuff, time, 9);                 // copy flash string to memory
-  DateTime a = DateTime( ybuff, tbuff);     // Use the string version to instantiate a temporary object
-  yOff = a.yOff, m = a.m, d = a.d, hh = a.hh, mm = a.mm, ss = a.ss; //copy temporary data to this object
+  memcpy_P(ybuff, date, 11);            // copy flash string to memory
+  memcpy_P(tbuff, time, 9);             // copy flash string to memory
+  DateTime a = DateTime(ybuff, tbuff);  // Use the string version to instantiate a temporary object
+  yOff = a.yOff, m = a.m, d = a.d, hh = a.hh, mm = a.mm,
+  ss = a.ss;  // copy temporary data to this object
 }  // of method DateTime()
 uint8_t DateTime::dayOfTheWeek() const {
   /*!

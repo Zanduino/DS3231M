@@ -41,6 +41,7 @@
 
  Version| Date       | Developer  | Comments
  ------ | ---------- | ---------- | --------
+ 1.0.9  | 2021-12-27 | lagg070988 | Issue #17 - fixed error in setting compiled library date
  1.0.8  | 2021-12-12 | lagg070988 | Issue #18 - fixed error in constants for square wave
  1.0.7  | 2021-12-12 | lagg070988 | Issue #18 - add variable square wave for DS3231
  1.0.5  | 2020-09-28 | gvisca44   | Issue #13 - add function "isStopped()"
