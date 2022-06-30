@@ -39,22 +39,23 @@
 
  @section versions Changelog
 
- Version| Date       | Developer  | Comments
- ------ | ---------- | ---------- | --------
- 1.0.9  | 2021-12-27 | lagg070988 | Issue #17 - fixed error in setting compiled library date
- 1.0.8  | 2021-12-12 | lagg070988 | Issue #18 - fixed error in constants for square wave
- 1.0.7  | 2021-12-12 | lagg070988 | Issue #18 - add variable square wave for DS3231
- 1.0.5  | 2020-09-28 | gvisca44   | Issue #13 - add function "isStopped()"
- 1.0.5  | 2020-09-28 | SV-Zanshin | Issue #14 - Reformat using clang-format
- 1.0.4  | 2020-05-17 | neocao123  | Issue #12 - overflow on hours was allowed
- 1.0.4  | 2020-05-17 | SV-Zanshin | Cleaned up comments
- 1.0.4  | 2019-08-18 | lagg070988 | Issue  #9 - PinAlarm & PinSquareWave logic corrected
- 1.0.4  | 2019-02-02 | SV-Zanshin | Issue  #8 - converted documentation to doxygen
- 1.0.3  | 2019-01-27 | SV-Zanshin | Issue  #4 - incorrect datatype for I2C causes overflow
- 1.0.2  | 2018-07-02 | SV-Zanshin | Added guard code against multiple I2C Speed definitions
- 1.0.2  | 2018-06-30 | SV-Zanshin | Issue  #3 - Allow 400KHz I2C bus speed to be set
- 1.0.0  | 2017-08-19 | SV-Zanshin | Initial release
- 1.0.0b | 2017-08-13 | SV-Zanshin | Initial coding
+ Version| Date       | Developer     | Comments
+ ------ | ---------- | ------------- | --------
+ 1.0.9  | 2022-06-29 | Levent-Keskin | Issue #22 - DOW range incorrect
+ 1.0.9  | 2021-12-27 | lagg070988    | Issue #17 - fixed error in setting compiled library date
+ 1.0.8  | 2021-12-12 | lagg070988    | Issue #18 - fixed error in constants for square wave
+ 1.0.7  | 2021-12-12 | lagg070988    | Issue #18 - add variable square wave for DS3231
+ 1.0.5  | 2020-09-28 | gvisca44      | Issue #13 - add function "isStopped()"
+ 1.0.5  | 2020-09-28 | SV-Zanshin    | Issue #14 - Reformat using clang-format
+ 1.0.4  | 2020-05-17 | neocao123     | Issue #12 - overflow on hours was allowed
+ 1.0.4  | 2020-05-17 | SV-Zanshin    | Cleaned up comments
+ 1.0.4  | 2019-08-18 | lagg070988    | Issue  #9 - PinAlarm & PinSquareWave logic corrected
+ 1.0.4  | 2019-02-02 | SV-Zanshin    | Issue  #8 - converted documentation to doxygen
+ 1.0.3  | 2019-01-27 | SV-Zanshin    | Issue  #4 - incorrect datatype for I2C causes overflow
+ 1.0.2  | 2018-07-02 | SV-Zanshin    | Added guard code against multiple I2C Speed definitions
+ 1.0.2  | 2018-06-30 | SV-Zanshin    | Issue  #3 - Allow 400KHz I2C bus speed to be set
+ 1.0.0  | 2017-08-19 | SV-Zanshin    | Initial release
+ 1.0.0b | 2017-08-13 | SV-Zanshin    | Initial coding
 */
 
 #include <Wire.h>  // Standard I2C "Wire" library
