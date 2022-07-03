@@ -41,6 +41,7 @@
 
  Version| Date       | Developer     | Comments
  ------ | ---------- | ------------- | --------
+ 1.0.9  | 2022-06-29 | Levent-Keskin | Issue #22 - Corrected formulat for DOW calculation for #22
  1.0.9  | 2022-06-29 | Levent-Keskin | Issue #22 - DOW range incorrect
  1.0.9  | 2021-12-27 | lagg070988    | Issue #17 - fixed error in setting compiled library date
  1.0.8  | 2021-12-12 | lagg070988    | Issue #18 - fixed error in constants for square wave

@@ -168,7 +168,7 @@ uint8_t DateTime::dayOfTheWeek() const {
    @return  DOW with Monday-Sunday 1-7
   */
   uint16_t day = date2days(yOff, m, d);  // compute the number of days
-  return ((day + 6) % 7) + 1;            // Jan 1, 2000 is a Saturday, i.e. 6, Issue #22
+  return ((day + 5) % 7) + 1;            // Jan 1, 2000 is a Saturday, i.e. 6, Issue #22a
 }  // of method dayOfTheWeek()
 uint32_t DateTime::unixtime(void) const {
   /*!
