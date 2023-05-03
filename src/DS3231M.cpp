@@ -23,7 +23,8 @@ static uint16_t date2days(uint16_t y, uint8_t m, uint8_t d) {
   for (uint8_t i = 1; i < m; ++i) {
     days += pgm_read_byte(daysInMonth + i - 1);  // Add number of days for each month
   }                                              // for-next each month
-  if (m > 2 && y % 4 == 0) {
+ if (m > 2 && (((y % 4 == 0) && (y % 100 != 0)) ||
+    (y % 400 == 0))) {
     ++days;                                 // Deal with leap years
   }                                         // if-then leap year
   return days + 365 * y + (y + 3) / 4 - 1;  // Return computed value
