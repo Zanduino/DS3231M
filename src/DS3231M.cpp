@@ -457,7 +457,7 @@ bool DS3231M_Class::isAlarm() {
    @return true if either of the 2 alarms is triggered, otherwise false
   */
   uint8_t controlByte = readByte(DS3231M_CONTROL);
-  unit8_t statusByte  = readByte(DS3231M_STATUS);
+  uint8_t statusByte  = readByte(DS3231M_STATUS);
   return ((controlByte & 0xFE) && (statusByte & 0xFE)) |
          ((controlByte & 0xFD) && (statusByte & 0xFD));
 }  // of method isAlarm()
