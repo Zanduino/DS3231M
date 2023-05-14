@@ -458,7 +458,7 @@ bool DS3231M_Class::isAlarm() {
   */
   uint8_t controlByte = readByte(DS3231M_CONTROL);
   unit8_t statusByte  = readByte(DS3231M_STATUS);
-  return ((controlByte & 0xFE) && (statusByte & 0xFE)) | 
+  return ((controlByte & 0xFE) && (statusByte & 0xFE)) |
          ((controlByte & 0xFD) && (statusByte & 0xFD));
 }  // of method isAlarm()
 void DS3231M_Class::clearAlarm() {
