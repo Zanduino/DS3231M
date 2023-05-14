@@ -456,8 +456,10 @@ bool DS3231M_Class::isAlarm() {
    @brief  return whether either of the two alarms has been triggered
    @return true if either of the 2 alarms is triggered, otherwise false
   */
-  return (readByte(DS3231M_STATUS) & 3);  // Alarm if either of 2 LSBits set
-}  // of method isAlarm()
+  uint8_t controlByte = readByte(DS3231M_CONTROL);
+  unit8_t statusByte  = readByte(DS3231M_STATUS);
+  return ((controlByte & 0xFE) && (statusByte & 0xFE)) | 
+         ((controlByte & 0xFD) && (statusByte & 0xFD))}  // of method isAlarm()
 void DS3231M_Class::clearAlarm() {
   /*!
    @brief  Clear a set alarm by re-writing the same contents back to the register
