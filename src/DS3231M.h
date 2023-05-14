@@ -41,6 +41,7 @@
 
  Version| Date       | Developer     | Comments
  ------ | ---------- | ------------- | --------
+ 1.0.10 | 2023-06-14 | capitainekurck| Issue #24 - IsAlarm() ignores status bits
  1.0.10 | 2023-05-03 | capitainekurck| Issue #23 - Corrected formula for leap year calculation
  1.0.9  | 2022-06-29 | Levent-Keskin | Issue #22 - Corrected formula for DOW calculation for #22
  1.0.9  | 2022-06-29 | Levent-Keskin | Issue #22 - DOW range incorrect
