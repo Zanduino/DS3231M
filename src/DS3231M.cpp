@@ -456,10 +456,9 @@ bool DS3231M_Class::isAlarm() {
    @brief  return whether either of the two alarms has been triggered
    @return true if either of the 2 alarms is triggered, otherwise false
   */
-  uint8_t controlByte = readByte(DS3231M_CONTROL);
-  uint8_t statusByte  = readByte(DS3231M_STATUS);
-  return ((controlByte & 0xFE) && (statusByte & 0xFE)) |
-         ((controlByte & 0xFD) && (statusByte & 0xFD));
+  uint8_t controlByte = readByte(DS3231M_CONTROL) & 0xFC;  // Mask out all but last 2 bits for ALM1&2
+  uint8_t statusByte  = readByte(DS3231M_STATUS) & 0xFC;   // Mask out all but last 2 bits for ALM1&2
+  return (controlByte & statusByte);                       // Nonzero when alarm and switch bits set
 }  // of method isAlarm()
 void DS3231M_Class::clearAlarm() {
   /*!
