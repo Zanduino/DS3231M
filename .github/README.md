@@ -7,7 +7,7 @@
 *Arduino* library for accessing the maxim integrated . This clock requires no external components and with an internal temperature-compensated oscillator it is extremely accurate, to within ±5ppm or ±0.432 Second/Day. The library allows setting the date/time and alarms as well as accessing other information on the DS3231M.
 
 # DS3231 Support
-The DS3231 RTC is also supported by this library, including additional funcationality of being able to set the frequency of the square wave output.
+The DS3231 RTC is also supported by this library, including additional functionality of being able to set the frequency of the square wave output.
 
 ## Overview
 The DS3231M is available as a SO8 or SO16 package and runs on both 3V and 5V systems. It has two alarms and also battery backup circuitry and requires no external crystals/oscillators or capacitors to run.
